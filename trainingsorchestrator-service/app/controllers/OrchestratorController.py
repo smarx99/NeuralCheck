@@ -5,6 +5,7 @@ class OrchestratorController:
 
     def __init__(self, url):
         self.url = url
+        self.orchestratorService = OrchestratorService()
 
     def receive_request(self):
         try:
@@ -17,10 +18,11 @@ class OrchestratorController:
     
     def process_request(self, json_request):
         try: 
-            service = OrchestratorService()
-            service.splitting_configs(json_request)
-            return service.training_queue
+            self.orchestratorService.splitting_configs(json_request)
+            return self.orchestratorService.training_queue
         except Exception as e:
             print("An error occurred while processing the request:", e)
             return ''
+        
+
         
