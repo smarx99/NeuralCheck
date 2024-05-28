@@ -8,7 +8,7 @@ class DataHandler:
     def load_dataset(self):
 
         # Load the dataset and create a dataframe
-        df = pd.read_csv("breast_cancer.csv", index_col="id")
+        df = pd.read_csv("Trainingsservice/breast_cancer.csv", index_col="id")
 
         # print(df.head())
         return df

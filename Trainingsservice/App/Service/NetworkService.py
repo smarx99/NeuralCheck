@@ -12,7 +12,7 @@ class NetworkService:
     def create_network(self, configurations):
 
         num_layers = configurations.layers
-        num_nodes_per_layer = configurations.node_per_layer
+        num_nodes_per_layer = configurations.nodes_per_layer
         activation_function = configurations.activation_functions
 
         # create network sequentially
