@@ -1,79 +1,85 @@
 import React, { useState } from 'react';
 
-
-interface HeroCardProps {
-    title: string
-    layers: string
-    nodes: string
-    actfunction: string
+interface LayerConfig {
+    nodes: number;
+    actFunction: string;
 }
 
-/**
- * Cards to configure networks
- */
+interface HeroCardProps {
+    title: string;
+    initialLayers: number;
+    initialNodes: number;
+    initialActFunction: string;
+}
+
 const HeroCard: React.FC<HeroCardProps> = ({ 
   title,
-  layers,
-  nodes,
-  actfunction,
+  initialLayers,
+  initialNodes,
+  initialActFunction
 }) => {
-  const [layerCount, setLayerCount] = useState(layers);
-  const [nodeCount, setNodeCount] = useState(nodes);
-  const [activation, setActivation] = useState(actfunction);
+    const [layers, setLayers] = useState(initialLayers);
+    const [layerConfigs, setLayerConfigs] = useState<LayerConfig[]>(
+        Array(initialLayers).fill({ nodes: initialNodes, actFunction: initialActFunction })
+    );
 
-  const handleLayerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLayerCount(e.target.value);
-  };
+    const activationFunctions = ['sigmoid', 'relu', 'tanh', 'linear'];
 
-  const handleNodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNodeCount(e.target.value);
-  };
+    const handleLayerChange = (index: number, field: string, value: string | number) => {
+        const newLayerConfigs = [...layerConfigs];
+        newLayerConfigs[index] = { ...newLayerConfigs[index], [field]: value };
+        setLayerConfigs(newLayerConfigs);
+    };
 
-  const handleActivationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setActivation(e.target.value);
-  };
+    const handleLayersInputChange = (value: number) => {
+        setLayers(value);
+        const newLayerConfigs = Array(value).fill({ nodes: initialNodes, actFunction: initialActFunction });
+        setLayerConfigs(newLayerConfigs);
+    };
 
-  return (
-    <div className="bg-white border-4 border-gray-200 shadow-lg rounded-lg p-4 w-80 h-auto flex flex-col justify-center items-center text-center">
-      <div className="flex-grow flex justify-center items-center text-center">
-        <div className="font-bold text-xl text-primary mb-4">{title}</div>
-      </div>
-      <div className="flex-grow flex flex-col items-start w-full">
-        <label className="text-lg text-primary mb-2 w-full">
-          Number of hidden layers:
-          <input
-            type="number"
-            value={layerCount}
-            onChange={handleLayerChange}
-            className="w-full mt-1 px-2 py-1 border rounded"
-          />
-        </label>
-        <label className="text-lg text-primary mb-2 w-full">
-          Number of nodes per layer:
-          <input
-            type="number"
-            value={nodeCount}
-            onChange={handleNodeChange}
-            className="w-full mt-1 px-2 py-1 border rounded"
-          />
-        </label>
-        <label className="text-lg text-primary w-full">
-          Activation function:
-          <select
-            value={activation}
-            onChange={handleActivationChange}
-            className="w-full mt-1 px-2 py-1 border rounded"
-          >
-            <option value="sigmoid">Sigmoid</option>
-            <option value="relu">ReLU</option>
-            <option value="tanh">Tanh</option>
-            <option value="leakyrelu">Leaky ReLU</option>
-            <option value="softmax">Softmax</option>
-          </select>
-        </label>
-      </div>
-    </div>
-  );
-};
+    return (
+        <div className="bg-white border-gray shadow-lg rounded-lg p-6 w-96 flex flex-col border-4 justify-center items-center text-center transition transform hover:scale-105">
+          <div className="font-bold text-2xl mb-4 text-primary">{title}</div>
+          <div className="flex flex-col space-y-4 w-full">
+            <div>
+              <label className="block mb-1 text-secondary">Hidden Layers</label>
+              <input 
+                type="number" 
+                value={layers} 
+                onChange={(e) => handleLayersInputChange(Number(e.target.value))} 
+                className="border rounded p-2 w-full text-center" 
+                min="1"
+              />
+            </div>
+            {layerConfigs.map((config, index) => (
+              <div key={index} className="border-t pt-4 mt-4">
+                <div>
+                  <label className="block mb-1 text-secondary">Nodes in Layer {index + 1}</label>
+                  <input 
+                    type="number" 
+                    value={config.nodes} 
+                    onChange={(e) => handleLayerChange(index, 'nodes', Number(e.target.value))} 
+                    className="border rounded p-2 w-full text-center" 
+                    min="1"
+                  />
+                </div>
+                <div>
+                  <label className="block mb-1 text-secondary">Activation Function</label>
+                  <select 
+                    value={config.actFunction} 
+                    onChange={(e) => handleLayerChange(index, 'actFunction', e.target.value)} 
+                    className="border rounded p-2 w-full text-center"
+                  >
+                    {activationFunctions.map((func, funcIndex) => (
+                      <option key={funcIndex} value={func}>{func}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+    );
+}
 
-export default HeroCard
+export default HeroCard;
