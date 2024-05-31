@@ -4,15 +4,15 @@ app = Flask(__name__)
  
 @app.route("/configs", methods=['GET'])
 def return_configs():
-    message = [{"nodes_per_layer": 3,
-               "layers": 5,
-               "activation_functions": ["Sigmoid", "Sigmoid", "ReLu", "Softmax", "Softmax"]},
-               {"nodes_per_layer": 4,
-               "layers": 2,
+    message = [{"layers": 5,
+               "nodes_per_layer": [3, 5, 2, 8, 4],
+               "activation_functions": ["Sigmoid", "Sigmoid", "ReLU", "Softmax", "Softmax"]},
+               {"layers": 2,
+                "nodes_per_layer": [2, 5],
                "activation_functions": ["Sigmoid", "Softmax"]},
-               {"nodes_per_layer": 7,
-               "layers": 4,
-               "activation_functions": ["Sigmoid", "ReLu", "Softmax", "Softmax"]}
+               {"layers": 4,
+                "nodes_per_layer": [5, 2, 8, 4],
+               "activation_functions": ["Sigmoid", "ReLU", "Softmax", "Softmax"]}
     ]
     return jsonify(message)
  

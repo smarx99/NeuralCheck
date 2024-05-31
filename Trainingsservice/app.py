@@ -9,7 +9,7 @@ app = Flask(__name__)
 # Create instances of the classes
 data_handler = DataHandler()
 network_service = NetworkService()
-configurations = Configuration(3, [30, 14, 1], ['relu', 'relu', 'sigmoid'], 0)
+# configurations = Configuration(3, [30, 14, 1], ['relu', 'relu', 'sigmoid'], 0)
 network_controller = NetworkController(network_service)
 
 
@@ -38,6 +38,7 @@ def configuration_to_dict(config):
 def train_network():
     # Extrahiere die Hyperparameter aus der Anfrage
     data = request.get_json()
+    print("Received data for training:", data)  # Log received data
     configuration = Configuration(
         layers=data.get('layers'),
         nodes_per_layer=data.get('nodes_per_layer'),
@@ -50,7 +51,7 @@ def train_network():
     x_train, x_test, y_train, y_test = data_handler.split_data(prepared_data)
 
     # Create, train, and evaluate network
-    network = network_controller.process(configurations)
+    network = network_controller.process(configuration)
     trained_network = network_service.train_network(network, x_train, y_train)
     test_acc = network_service.evaluate_network(trained_network, x_test, y_test)
 

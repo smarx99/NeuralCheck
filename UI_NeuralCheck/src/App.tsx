@@ -1,35 +1,58 @@
-import React from 'react';
-import HeroCard from './components/HeroCard';
-import Accuracy from './components/Accuracy';
+import React, { useRef, useState } from 'react';
+import HeroCard, { HeroCardRef } from './components/HeroCard';
+import axios from 'axios';
 
-const heroItems = [
+const initialHeroItems = [
   {
     title: 'Neural Network 1',
-    initialLayers: 3,
-    initialNodes: 10,
-    initialActFunction: 'sigmoid',
+    layersCount: 0,
+    nodesCount: 0,
+    activationFunction: '',
   },
   {
     title: 'Neural Network 2',
-    initialLayers: 2,
-    initialNodes: 20,
-    initialActFunction: 'relu',
+    layersCount: 0,
+    nodesCount: 0,
+    activationFunction: '',
   },
   {
     title: 'Neural Network 3',
-    initialLayers: 1,
-    initialNodes: 5,
-    initialActFunction: 'tanh',
+    layersCount: 0,
+    nodesCount: 0,
+    activationFunction: '',
   },
 ];
 
-const accuracyItems = [
-  'Accuracy: 60%',
-  'Accuracy: 75%',
-  'Accuracy: 85%',
-];
+interface Result {
+  result: number;
+}
 
 const App: React.FC = () => {
+  const heroCardRefs = useRef<(HeroCardRef | null)[]>([]);
+  const [results, setResults] = useState<Record<string, Result>>({});
+  const [isTraining, setIsTraining] = useState<boolean>(false);
+
+  const handleStartTraining = async () => {
+    const configs = heroCardRefs.current.map(ref => ref?.getConfig());
+    const dataToSend = configs.map(config => ({
+      layers: config?.layersCount,
+      nodes_per_layer: config?.layerConfigs.map(layer => layer.nodes),
+      activation_functions: config?.layerConfigs.map(layer => layer.actFunction),
+    }));
+
+    setIsTraining(true);  // Setze den Trainingsstatus auf "true"
+
+    try {
+      const response = await axios.post('http://localhost:8001/orch', dataToSend);
+      console.log('Response:', response.data); // Logge die gesamte Response
+      setResults(response.data.results || {});
+    } catch (error) {
+      console.error('Error sending configuration:', error);
+    } finally {
+      setIsTraining(false);  // Setze den Trainingsstatus auf "false"
+    }
+  };
+
   return (
     <div className="relative min-h-screen">
       <div className="absolute top-4 left-4 text-sm text-gray-700">
@@ -42,25 +65,26 @@ const App: React.FC = () => {
         NeuralCheck
       </p>
       <div className="flex justify-center space-x-16 mb-8">
-        {heroItems.map((item, index) => (
+        {initialHeroItems.map((item, index) => (
           <HeroCard
             key={index}
+            ref={el => heroCardRefs.current[index] = el}
             title={item.title}
-            initialLayers={item.initialLayers}
-            initialNodes={item.initialNodes}
-            initialActFunction={item.initialActFunction}
+            initialLayersCount={item.layersCount}
+            initialNodesCount={item.nodesCount}
+            initialActivationFunction={item.activationFunction}
+            result={isTraining ? 'Training in progress...' : results[`Config${index + 1}`]?.result}
+
           />
         ))}
       </div>
       <div className='flex justify-center mb-8'>
-        <button className='rounded-xl border border-primary mt-8 bg-primary text-white font-medium text-3xl px-8 py-2 transition transform hover:scale-105'>
+        <button
+          onClick={handleStartTraining}
+          className='bg-white border-gray border-4 shadow-lg rounded-lg mt-8 font-medium text-3xl px-8 py-2 transition transform hover:scale-105'
+        >
           Start Training!
         </button>
-      </div>
-      <div className="flex justify-center space-x-16">
-        {accuracyItems.map((accuracy, index) => (
-          <Accuracy key={index} accuracy={accuracy} />
-        ))}
       </div>
     </div>
   );
