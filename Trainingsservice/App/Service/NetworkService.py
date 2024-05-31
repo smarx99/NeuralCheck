@@ -18,13 +18,13 @@ class NetworkService:
         network = models.Sequential()
         for i in range(num_layers):
             # input_shape = (30,)
-            # network.add(layers.Dense(units=num_nodes_per_layer[i], activation=activation_function[i]))
+            network.add(layers.Dense(units=num_nodes_per_layer[i], activation=activation_function[i]))
             # network.add(Dropout(rate=0.1))
-            if i == 0:
-                network.add(layers.Dense(units=num_nodes_per_layer[i], activation=activation_function[i]))
-                network.add(layers.Dropout(rate=0.1))
-            else:
-                network.add(layers.Dense(units=num_nodes_per_layer[i], activation=activation_function[i]))
+            # if i == 0:
+            #     network.add(layers.Dense(units=num_nodes_per_layer[i], activation=activation_function[i]))
+            #     network.add(layers.Dropout(rate=0.1))
+            # else:
+            #     network.add(layers.Dense(units=num_nodes_per_layer[i], activation=activation_function[i]))
 
         return network
 
