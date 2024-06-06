@@ -3,25 +3,32 @@ from models.Configuration import Configuration
 class OrchestratorService:
 
     def __init__(self):
-        self.training_queue = None
+        self.training_queue = []
 
-    def splitting_configs(self, json_configs):
+    def splitting_configs(self, configs):
         try:
-            configs = []
-            for json_config in json_configs:
-                configs.append(Configuration(json_config.get("nodes_per_layer"), json_config.get("layers"), json_config.get("activation_functions")))
-            self.training_queue = configs
+            print("Splitting configs:", configs)
+            self.training_queue = []
+            for config in configs:
+                layers = len(config['nodes_per_layer'])  # Anzahl der Schichten ist die Länge der nodes_per_layer Liste
+                nodes_per_layer = config['nodes_per_layer']  # nodes_per_layer sollte eine Liste sein
+                activation_functions = config['activation_functions']
+                self.training_queue.append(Configuration(layers, nodes_per_layer, activation_functions))
+            print("Training queue:", self.training_queue)
         except Exception as e:
             print("An error occured while splitting the received configs: ", e)
             self.training_queue = Configuration('', '', '')
+        print("Splitting configs:", configs) # Logge die aufgeteilten Konfigurationen
 
     def configuration_to_dict(self, config):
-        return {
-            "nodes_per_layer": config.nodes_per_layer,
-            "layers": config.layers,
+        config_dict = {
+            "layers": config.layers,  # layers sollte eine Ganzzahl sein
+            "nodes_per_layer": config.nodes_per_layer,  # nodes_per_layer sollte eine Liste sein
             "activation_functions": config.activation_functions,
             "result": config.result
         }
+        print("Configuration to dict:", config_dict)
+        return config_dict
     
     def recommend_config(self, configs):
         try:
