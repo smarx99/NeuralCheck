@@ -1,5 +1,9 @@
 import React, { useRef, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import HeroCard, { HeroCardRef } from './components/HeroCard';
+import Login from './components/Login';
+import Register from './components/Register';
+import Sidebar from './components/Sidebar';
 import axios from 'axios';
 
 const initialHeroItems = [
@@ -31,6 +35,7 @@ const App: React.FC = () => {
   const heroCardRefs = useRef<(HeroCardRef | null)[]>([]);
   const [results, setResults] = useState<Record<string, Result>>({});
   const [isTraining, setIsTraining] = useState<boolean>(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
 
   const handleStartTraining = async () => {
     const configs = heroCardRefs.current.map(ref => ref?.getConfig());
@@ -53,40 +58,57 @@ const App: React.FC = () => {
     }
   };
 
-  return (
-    <div className="relative min-h-screen">
-      <div className="absolute top-4 left-4 text-sm text-gray-700">
-        <label htmlFor="dataset-select" className="mr-2">Used dataset:</label>
-        <select id="dataset-select" className="border rounded p-1">
-          <option value="breast_cancer.csv">breast_cancer.csv</option>
-        </select>
-      </div>
-      <p className="text-5xl w-full font-bold mt-10 mb-10 flex justify-center text-primary">
-        NeuralCheck
-      </p>
-      <div className="flex justify-center space-x-16 mb-8">
-        {initialHeroItems.map((item, index) => (
-          <HeroCard
-            key={index}
-            ref={el => heroCardRefs.current[index] = el}
-            title={item.title}
-            initialLayersCount={item.layersCount}
-            initialNodesCount={item.nodesCount}
-            initialActivationFunction={item.activationFunction}
-            result={isTraining ? 'Training in progress...' : results[`Config${index + 1}`]?.result}
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
-          />
-        ))}
+  return (
+    <Router>
+      <div className="flex">
+        <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+        <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-16'}`}>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/app" element={
+              <div className="relative min-h-screen">
+                <div className="absolute top-4 left-4 text-sm text-gray-700">
+                  <label htmlFor="dataset-select" className="mr-2">Used dataset:</label>
+                  <select id="dataset-select" className="border rounded p-1">
+                    <option value="breast_cancer.csv">breast_cancer.csv</option>
+                  </select>
+                </div>
+                <p className="text-5xl w-full font-bold mt-10 mb-10 flex justify-center text-primary">
+                  NeuralCheck
+                </p>
+                <div className="flex justify-center space-x-16 mb-8">
+                  {initialHeroItems.map((item, index) => (
+                    <HeroCard
+                      key={index}
+                      ref={el => heroCardRefs.current[index] = el}
+                      title={item.title}
+                      initialLayersCount={item.layersCount}
+                      initialNodesCount={item.nodesCount}
+                      initialActivationFunction={item.activationFunction}
+                      result={isTraining ? 'Training in progress...' : results[`Config${index + 1}`]?.result}
+                    />
+                  ))}
+                </div>
+                <div className='flex justify-center mb-8'>
+                  <button
+                    onClick={handleStartTraining}
+                    className='bg-white border-gray border-4 shadow-lg rounded-lg mt-8 font-medium text-3xl px-8 py-2 transition transform hover:scale-105'
+                  >
+                    Start Training!
+                  </button>
+                </div>
+              </div>
+            } />
+            <Route path="*" element={<Navigate to="/login" />} />
+          </Routes>
+        </div>
       </div>
-      <div className='flex justify-center mb-8'>
-        <button
-          onClick={handleStartTraining}
-          className='bg-white border-gray border-4 shadow-lg rounded-lg mt-8 font-medium text-3xl px-8 py-2 transition transform hover:scale-105'
-        >
-          Start Training!
-        </button>
-      </div>
-    </div>
+    </Router>
   );
 };
 

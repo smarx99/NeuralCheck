@@ -80,7 +80,7 @@ const HeroCard = forwardRef<HeroCardRef, HeroCardProps>(({
               />
             </div>
             <div>
-              <label className="block mb-1 text-secondary">Activation Function</label>
+              <label className="block mb-1 text-secondary">Activation Function {layerIndex + 1}</label>
               <select 
                 value={config.actFunction} 
                 onChange={(e) => handleLayerChange(layerIndex, 'actFunction', e.target.value)} 
