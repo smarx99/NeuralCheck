@@ -3,48 +3,75 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const Register: React.FC = () => {
-  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [message, setMessage] = useState('')
   const navigate = useNavigate();
 
-  const handleRegister = async () => {
+  const handleRegistration = async () => {
     try {
-      const response = await axios.post('http://localhost:8001/register', { email, password });
-      
-      if (response.status === 201) { // Annahme: Erfolgreiche Registrierung gibt Status 201 zurück
-        setSuccess('Registrierung erfolgreich! Sie werden in Kürze weitergeleitet.');
+      const response = await axios.post('http://localhost:8003/register', { username, first_name: firstName, last_name: lastName, password });
+      if (response.status === 201) {
+        setMessage("Registrierung erfolgreich! Sie werden in Kürze weitergeleitet.");
         setTimeout(() => {
           navigate('/login'); // Weiterleitung zur Login-Seite nach erfolgreicher Registrierung
         }, 2000); // Warte 2 Sekunden, bevor weitergeleitet wird
       } else {
+        setMessage('')
         setError('Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.');
       }
     } catch (error) {
       console.error('Error during registration:', error);
-      setError('Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.');
+      setError('Registrierung fehlgeschlagen. Bitte überprüfen Sie Ihre Anmeldedaten.');
     }
   };
 
   return (
-    <div className="register-container">
-      <h2>Register</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-      />
-      <button onClick={handleRegister}>Register</button>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="bg-white border-gray shadow-lg rounded-lg p-8 w-full max-w-md border-4">
+        <h2 className="text-2xl font-bold mb-6 text-center">Registration</h2>
+        {error && <p className="text-red-500 mb-4">{error}</p>}
+        {message && <p className="text-green-500 mb-4">{message}</p>}
+        <div className="space-y-4">
+          <input
+            type="text"
+            placeholder="First Name"
+            value={firstName}
+            onChange={e => setFirstName(e.target.value)}
+            className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="text"
+            placeholder="Last Name"
+            value={lastName}
+            onChange={e => setLastName(e.target.value)}
+            className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={e => setUsername(e.target.value)}
+            className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            onClick={handleRegistration}
+            className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-300"
+          >
+            Register
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

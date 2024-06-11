@@ -9,7 +9,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
   return (
-    <div className={`fixed top-0 left-0 h-full ${isOpen ? 'w-60' : 'w-16'} bg-gray-800 text-white transition-width duration-300`}>
+    <div className={`fixed top-0 left-0 h-full ${isOpen ? 'w-60' : 'w-16'} bg-blue-800 text-white transition-width duration-300`}>
       <div className="flex items-center justify-between p-4">
         <h1 className={`text-xl font-bold ${isOpen ? 'block' : 'hidden'}`}>NeuralCheck</h1>
         <button onClick={toggleSidebar} className="focus:outline-none">

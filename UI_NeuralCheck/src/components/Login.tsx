@@ -5,15 +5,12 @@ import { useNavigate } from 'react-router-dom';
 const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState('')
   const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://localhost:8003/login', { username: username, password: password });
+      const response = await axios.post('http://localhost:8003/login', { username, password });
       const token = response.data.token;
 
       if (token) {
@@ -28,69 +25,31 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleRegistration = async () => {
-    try {
-      const response = await axios.post('http://localhost:8003/register', { username: username,  first_name: firstName, last_name: lastName, password: password });
-      if(response.status == 201) {
-        setMessage("Erfolgreich registriert. Sie können sich nun einloggen.");
-      } else {
-        setMessage('')
-        setError('Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.');
-      }
-    } catch (error) {
-      console.error('Error during registration:', error);
-      setError('Registrierung fehlgeschlagen. Bitte überprüfen Sie Ihre Anmeldedaten.');
-    }
-  };
-
   return (
-    <div className='login-page'>
-      <div className="register-container">
-        <h2>Registration</h2>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="bg-white border-gray shadow-lg rounded-lg p-8 w-full max-w-md border-4">
+        <h2 className="text-2xl font-bold mb-6 text-center text-primary">Login</h2>
+        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         <input
-          type="firstName"
-          placeholder="First Name"
-          value={firstName}
-          onChange={e => setFirstName(e.target.value)}
-        />
-        <input
-          type="lastName"
-          placeholder="Last Name"
-          value={lastName}
-          onChange={e => setLastName(e.target.value)}
-        />
-        <input
-          type="username"
+          type="text"
           placeholder="Username"
           value={username}
           onChange={e => setUsername(e.target.value)}
+          className="mb-4 px-4 py-2 border rounded w-full text-center"
         />
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={e => setPassword(e.target.value)}
+          className="mb-4 px-4 py-2 border rounded w-full text-center"
         />
-        <button onClick={handleRegistration}>Register</button>
-        {message && <p style={{ color: 'green' }}>{message}</p>}
-      </div>
-      <div className="login-container">
-        <h2>Login</h2>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <input
-          type="username"
-          placeholder="Username"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-        />
-        <button onClick={handleLogin}>Login</button>
+        <button
+          onClick={handleLogin}
+          className="bg-blue-500 text-white font-bold py-2 px-4 rounded w-full transition transform hover:scale-105"
+        >
+          Login
+        </button>
       </div>
     </div>
   );
