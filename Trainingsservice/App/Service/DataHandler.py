@@ -12,7 +12,6 @@ class DataHandler:
 
         # print(df.head())
         return df
-        # pass
 
     def prepare_data(self, data):
 
@@ -28,13 +27,15 @@ class DataHandler:
         # column.fillna(column.mean(), inplace=True)
 
         return df_prepared
-        # pass
 
     def split_data(self, data):
 
         # define feature and target vector
         x = data.iloc[:, 1:31]
         y = data["diagnosis"]
+
+        # count the number of features
+        num_features = x.shape[1]
 
         # encode categorical target vector
         encoder = LabelEncoder()
@@ -48,7 +49,7 @@ class DataHandler:
         x_train = scaler.fit_transform(x_train)
         x_test = scaler.transform(x_test)
 
-        return x_train, x_test, y_train, y_test
+        return x_train, x_test, y_train, y_test, num_features
 
 
     

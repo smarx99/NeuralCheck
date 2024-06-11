@@ -6,10 +6,10 @@ class NetworkController:
         # Receive configuration from training orchestration class
         self.config = config
 
-    def process(self, configuration):
+    def process(self, configuration, num_features):
 
         # Send configuration to NetworkService
-        return self.network_service.create_network(configuration)
+        return self.network_service.create_network(configuration, num_features)
 
     def return_result(self, config):
         # Return the network configuration and result back to the training orchestration class

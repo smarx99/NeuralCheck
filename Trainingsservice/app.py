@@ -48,10 +48,10 @@ def train_network():
     # Load and prepare data
     data = data_handler.load_dataset()
     prepared_data = data_handler.prepare_data(data)
-    x_train, x_test, y_train, y_test = data_handler.split_data(prepared_data)
+    x_train, x_test, y_train, y_test, num_features = data_handler.split_data(prepared_data)
 
     # Create, train, and evaluate network
-    network = network_controller.process(configuration)
+    network = network_controller.process(configuration, num_features)
     trained_network = network_service.train_network(network, x_train, y_train)
     test_acc = network_service.evaluate_network(trained_network, x_test, y_test)
 

@@ -8,7 +8,7 @@ class NetworkService:
         self.train_data = None
         self.test_data = None
 
-    def create_network(self, configurations):
+    def create_network(self, configurations, num_features):
 
         num_layers = configurations.layers
         num_nodes_per_layer = configurations.nodes_per_layer
@@ -16,22 +16,20 @@ class NetworkService:
 
         # create network sequentially
         network = models.Sequential()
+
+        # adding the input layer
+        network.add(layers.Input(shape=(num_features,)))
+        
         for i in range(num_layers):
-            # input_shape = (30,)
             network.add(layers.Dense(units=num_nodes_per_layer[i], activation=activation_function[i]))
-            # network.add(Dropout(rate=0.1))
-            # if i == 0:
-            #     network.add(layers.Dense(units=num_nodes_per_layer[i], activation=activation_function[i]))
-            #     network.add(layers.Dropout(rate=0.1))
-            # else:
-            #     network.add(layers.Dense(units=num_nodes_per_layer[i], activation=activation_function[i]))
+            # network.add(Dropout(rate=0.1)) 
 
         return network
 
     def train_network(self, network, x_train, y_train):
 
         # or adam as optimizer
-        network.compile(optimizer='SGD', loss='categorical_crossentropy', metrics=['accuracy'])
+        network.compile(optimizer='SGD', loss='binary_crossentropy', metrics=['accuracy'])
         network.fit(x_train, y_train, batch_size=50, epochs=100)
 
         return network
