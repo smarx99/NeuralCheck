@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import HeroCard, { HeroCardRef } from './components/HeroCard';
 import Login from './components/Login';
 import Register from './components/Register';
@@ -32,6 +32,7 @@ interface Result {
 }
 
 const App: React.FC = () => {
+  const location = useLocation();
   const heroCardRefs = useRef<(HeroCardRef | null)[]>([]);
   const [results, setResults] = useState<Record<string, Result>>({});
   const [isTraining, setIsTraining] = useState<boolean>(false);
@@ -63,13 +64,12 @@ const App: React.FC = () => {
   };
 
   return (
-    <Router>
       <div className="flex">
-        <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-        <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-16'}`}>
+        {location.pathname === '/app' && <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />}
+        <div className={`flex-1 transition-all duration-300 ${location.pathname === '/app' && isSidebarOpen ? 'ml-64' : 'ml-16'}`}>
           <Routes>
-            <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />       
             <Route path="/app" element={
               <div className="relative min-h-screen">
                 <div className="absolute top-4 left-4 text-sm text-gray-700">
@@ -99,7 +99,7 @@ const App: React.FC = () => {
                     onClick={handleStartTraining}
                     className='bg-white border-gray border-4 shadow-lg rounded-lg mt-8 font-medium text-3xl px-8 py-2 transition transform hover:scale-105'
                   >
-                    Start Training!
+                    Start!
                   </button>
                 </div>
               </div>
@@ -108,8 +108,13 @@ const App: React.FC = () => {
           </Routes>
         </div>
       </div>
-    </Router>
   );
 };
 
-export default App;
+const AppWithRouter: React.FC = () => (
+  <Router>
+    <App />
+  </Router>
+);
+
+export default AppWithRouter;

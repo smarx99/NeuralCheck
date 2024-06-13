@@ -30,7 +30,7 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center">
       <div className="bg-white border-gray shadow-lg rounded-lg p-8 w-full max-w-md border-4">
         <h2 className="text-2xl font-bold mb-6 text-center">Registration</h2>
         {error && <p className="text-red-500 mb-4">{error}</p>}
