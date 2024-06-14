@@ -4,6 +4,8 @@ import HeroCard, { HeroCardRef } from './components/HeroCard';
 import Login from './components/Login';
 import Register from './components/Register';
 import Sidebar from './components/Sidebar';
+import Account from './components/Account';
+import PrivateRoute from './components/PrivateRoute';
 import axios from 'axios';
 
 const initialHeroItems = [
@@ -49,7 +51,12 @@ const App: React.FC = () => {
     setIsTraining(true);  // Setze den Trainingsstatus auf "true"
 
     try {
-      const response = await axios.post('http://localhost:8001/orch', dataToSend);
+      const token = localStorage.getItem('token');
+      const response = await axios.post('http://localhost:8001/orch', dataToSend, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       console.log('Response:', response.data); // Logge die gesamte Response
       setResults(response.data.results || {});
     } catch (error) {
@@ -69,8 +76,9 @@ const App: React.FC = () => {
         <div className={`flex-1 transition-all duration-300 ${location.pathname === '/app' && isSidebarOpen ? 'ml-64' : 'ml-16'}`}>
           <Routes>
             <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />       
-            <Route path="/app" element={
+            <Route path="/login" element={<Login />} />
+            <Route path="/account" element={<PrivateRoute element={<Account />} />} />
+            <Route path="/app" element={<PrivateRoute element={
               <div className="relative min-h-screen">
                 <div className="absolute top-4 left-4 text-sm text-gray-700">
                   <label htmlFor="dataset-select" className="mr-2">Used dataset:</label>
@@ -103,7 +111,7 @@ const App: React.FC = () => {
                   </button>
                 </div>
               </div>
-            } />
+            } />} />
             <Route path="*" element={<Navigate to="/login" />} />
           </Routes>
         </div>

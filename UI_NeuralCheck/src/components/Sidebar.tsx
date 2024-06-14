@@ -36,6 +36,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
               <span className={`${isOpen ? 'block' : 'hidden'}`}>Logout</span>
             </Link>
           </li>
+          <li className="p-2">
+            <Link to="/account" className="flex items-center">
+              <span className="text-xl mr-4">Account</span>
+              <span className={`${isOpen ? 'block' : 'hidden'}`}>Account</span>
+            </Link>
+          </li>
         </ul>
       </nav>
     </div>
