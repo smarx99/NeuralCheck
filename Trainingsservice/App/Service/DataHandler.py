@@ -5,13 +5,13 @@ import pandas as pd
 
 
 class DataHandler:
-    def load_dataset(self):
-
-        # Load the dataset and create a dataframe
-        df = pd.read_csv("Trainingsservice/breast_cancer.csv", index_col="id")
-
-        # print(df.head())
-        return df
+    def load_dataset(self, dataset_id):
+        dataset = self.data_service.get_dataset(dataset_id)
+        if dataset is not None:
+            df = pd.DataFrame(dataset["data"])
+            return df
+        else:
+            raise ValueError("Dataset not found in data service.")
 
     def prepare_data(self, data):
 
@@ -31,11 +31,11 @@ class DataHandler:
     def split_data(self, data):
 
         # define feature and target vector
-        x = data.iloc[:, 1:31]
-        y = data["diagnosis"]
+        x = data.iloc[:, 1:data.shape[1]]
+        y = data["label"]
 
         # count the number of features
-        num_features = x.shape[1]
+        num_features = x.shape[1]-1
 
         # encode categorical target vector
         encoder = LabelEncoder()
