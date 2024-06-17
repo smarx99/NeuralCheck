@@ -51,6 +51,17 @@ class OrchestratorController:
         except Exception as e:
             print("An Error occured during returning results and recommendation: ",e)
             return ''
+
+    # Token Validierung    
+    def validate_token(self, token):
+        try:
+            auth_service_url = "http://localhost:8003/validate-auth"
+            response = requests.post(auth_service_url, json={'token': token})
+            return response.json()
+        except Exception as e:
+            print(e)
+            return None
+
         
 
         

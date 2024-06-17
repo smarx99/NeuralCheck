@@ -38,6 +38,38 @@ def login():
     else:
         return jsonify({'error': 'Invalid username or password'}), 401
 
+@app.route('/user', methods=['GET'])
+def get_user():
+    token = request.headers.get('Authorization')
+    if not token:
+        return jsonify({'error': 'Token is missing!'}), 401
+    try:
+        data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+        user = auth_controller.get_user(data)
+        if not user:
+                return jsonify({'error': 'User not found!'}), 404
+        user = user.to_dict()
+        user_data = {
+                'username': user['username'],
+                'first_name': user['first_name'],
+                'last_name': user['last_name'],
+        }
+        return jsonify(user_data), 200
+    except jwt.ExpiredSignatureError:
+        return jsonify({'error': 'Token has expired!'}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({'error': 'Invalid token!'}), 401
+
+@app.route('/validate-auth', methods=['POST'])
+def validate_auth():
+    token = request.json.get('token')
+    if not token:
+        return jsonify({'error': 'Token is missing'}), 400
+    validation_response = auth_controller.validate_token(token, app.config['SECRET_KEY'])
+    if 'error' in validation_response:
+        return jsonify(validation_response), 401
+    return jsonify({'message': 'Token is valid', 'data': validation_response}), 200
+
 
 if __name__ == '__main__':
     app.run(port=8003)
