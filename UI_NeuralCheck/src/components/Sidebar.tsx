@@ -2,6 +2,7 @@
 import React from 'react';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import { BsClipboardData } from "react-icons/bs";
+import { MdOutlineAccountCircle } from "react-icons/md";
 import { Link } from 'react-router-dom';
 
 interface SidebarProps {
@@ -52,10 +53,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, datasets, onUp
             </label>
           </li>
           <li className="p-2">
-            <Link to="/account" className="flex items-center">
-              <span className="text-xl mr-4">Account</span>
-              <span className={`${isOpen ? 'block' : 'hidden'}`}>Account</span>
-            </Link>
+            {isOpen && (
+              <Link to="/account" className="flex items-center">
+                <span className="text-xl mr-4"><MdOutlineAccountCircle /></span>
+                <span className={`${isOpen ? 'block' : 'hidden'}`}>Account</span>
+              </Link>
+            )}
           </li>
         </ul>
       </nav>

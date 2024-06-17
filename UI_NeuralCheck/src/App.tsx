@@ -88,7 +88,7 @@ const App: React.FC = () => {
   };
 
   return (
-      <div className="relative flex min-h-screen">
+      <div className={`flex-1 transition-all duration-300 ${location.pathname === '/app' && isSidebarOpen ? 'mr-4': 'ml-4'}`}>
         {location.pathname === '/app' && (
           <button
             onClick={handleLogout}
