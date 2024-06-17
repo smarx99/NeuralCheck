@@ -1,13 +1,16 @@
+// components/Sidebar.tsx
 import React from 'react';
 import { FaBars, FaTimes } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { BsClipboardData } from "react-icons/bs";
 
 interface SidebarProps {
   isOpen: boolean;
   toggleSidebar: () => void;
+  datasets: string[];
+  onUploadDataset: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, datasets, onUploadDataset }) => {
   return (
     <div className={`fixed top-0 left-0 h-full ${isOpen ? 'w-60' : 'w-16'} bg-blue-800 text-white transition-width duration-300`}>
       <div className="flex items-center justify-between p-4">
@@ -19,22 +22,33 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
       <nav className="mt-10">
         <ul>
           <li className="p-2">
-            <Link to="/app" className="flex items-center">
-              <span className="text-xl mr-4">🏠</span>
-              <span className={`${isOpen ? 'block' : 'hidden'}`}>Home</span>
-            </Link>
-          </li>
-          <li className="p-2">
-            <Link to="/datasets" className="flex items-center">
-              <span className="text-xl mr-4">📊</span>
+            <div className="flex items-center">
+              {isOpen && <span className="text-xl mr-4"><BsClipboardData /></span>}
               <span className={`${isOpen ? 'block' : 'hidden'}`}>Datasets</span>
-            </Link>
+            </div>
           </li>
-          <li className="p-2">
-            <Link to="/login" className="flex items-center">
-              <span className="text-xl mr-4">🔐</span>
-              <span className={`${isOpen ? 'block' : 'hidden'}`}>Logout</span>
-            </Link>
+          {datasets.map((dataset, index) => (
+            <li key={index} className="p-2 pl-8">
+              {isOpen && (
+                <span className="flex items-center">
+                  <BsClipboardData className="mr-2" />
+                  <span className="block">{dataset}</span>
+                </span>
+              )}
+            </li>
+          ))}
+          <li className="p-2 pl-8">
+            <input
+              type="file"
+              accept=".csv"
+              onChange={onUploadDataset}
+              className="hidden"
+              id="file-upload"
+            />
+            <label htmlFor="file-upload" className="cursor-pointer flex items-center">
+              {isOpen && <span className="text-xl mr-4">+</span>}
+              <span className={`${isOpen ? 'block' : 'hidden'}`}>Upload Dataset</span>
+            </label>
           </li>
         </ul>
       </nav>

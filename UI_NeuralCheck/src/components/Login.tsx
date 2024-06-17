@@ -17,11 +17,11 @@ const Login: React.FC = () => {
         localStorage.setItem('token', token);
         navigate('/app'); // Weiterleitung zur Haupt-App-Seite
       } else {
-        setError('Login fehlgeschlagen. Bitte versuchen Sie es erneut.');
+        setError('Login failed. Please try again.');
       }
     } catch (error) {
       console.error('Error during login:', error);
-      setError('Login fehlgeschlagen. Bitte überprüfen Sie Ihre Anmeldedaten.');
+      setError('Login failed. Please check your login details.');
     }
   };
 
