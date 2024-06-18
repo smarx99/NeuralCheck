@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 interface UserData {
   username: string;
@@ -52,14 +53,34 @@ const Account: React.FC = () => {
   }
 
   return (
-    <div>
-      <h1>Account Information</h1>
-      <p><strong>Username:</strong> {userData.username}</p>
-      <p><strong>First Name:</strong> {userData.first_name}</p>
-      <p><strong>Last Name:</strong> {userData.last_name}</p>
-      <button onClick={handleLogout}>Logout</button>
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="bg-white border-gray shadow-lg rounded-lg p-8 w-full max-w-md border-4">
+        <h2 className="text-2xl font-bold mb-6 text-center text-primary">Account Information</h2>
+        <p className="mb-4">
+          <strong className="font-bold">Username:</strong> {userData.username}
+        </p>
+        <p className="mb-4">
+          <strong className="font-bold">First Name:</strong> {userData.first_name}
+        </p>
+        <p className="mb-4">
+          <strong className="font-bold">Last Name:</strong> {userData.last_name}
+        </p>
+        <button
+          onClick={handleLogout}
+          className="bg-red-500 text-white font-bold py-2 px-4 rounded w-full transition transform hover:scale-105"
+        >
+          Logout
+        </button>
+        <p className="text-center mt-4">
+          Want to change your account?{' '}
+          <Link to="/edit-account" className="text-blue-500 hover:underline">
+            Edit here
+          </Link>
+        </p>
+      </div>
     </div>
   );
 };
+
 
 export default Account;

@@ -24,6 +24,7 @@ class NetworkService:
             network.add(layers.Dense(units=num_nodes_per_layer[i], activation=activation_function[i]))
             # network.add(Dropout(rate=0.1)) 
 
+        network.add(layers.Dense(units=1, activation='sigmoid'))
         return network
 
     def train_network(self, network, x_train, y_train):
