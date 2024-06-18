@@ -25,26 +25,37 @@ def configurations_to_dict(configs):
 @app.route("/orch", methods=['POST'])
 def print_configs():
     controller = OrchestratorController("http://localhost:5173/")
-    request_data = request.json
-    print("Request data:", request_data)
-    configs = controller.process_request(request_data)
-    print("Configs:", configs)
-    # request = controller.receive_request()
-    # configs = controller.process_request(request)
+    # Token Validierung
+    token = None
+    print(request.headers)
+    print(request.headers.get('Authorization'))
+    if 'Authorization' in request.headers:
+        auth_header = request.headers['Authorization']
+        token = auth_header.split(" ")[1] if auth_header.startswith("Bearer ") else None
+    if not token:
+        return jsonify({'message': 'Token is missing!'}), 403
+    token = controller.validate_token(token)
+    if(token):
+        request_data = request.json
+        print("Request data:", request_data)
+        configs = controller.process_request(request_data)
+        print("Configs:", configs)
 
-    training_service_url = "http://127.0.0.1:8002/train"
+        training_service_url = "http://127.0.0.1:8002/train"
 
-    results = controller.receive_results(configs, training_service_url)
+        results = controller.receive_results(configs, training_service_url)
 
-    results, best_key = controller.return_results_recommendations(results)
+        results, best_key = controller.return_results_recommendations(results)
 
-    response_data = {
-        "results": results, 
-        "recommended_config": best_key
-    }
+        response_data = {
+            "results": results, 
+            "recommended_config": best_key
+        }
 
-    print("Response Data:", response_data)  # Logge die Response-Daten zur Überprüfung
-    return jsonify(response_data)
+        print("Response Data:", response_data)  # Logge die Response-Daten zur Überprüfung
+        return jsonify(response_data)
+    else:
+        return jsonify({'message': 'Token validation error!'}), 500
 
 if __name__ == "__main__":
     app.run(port=8001)

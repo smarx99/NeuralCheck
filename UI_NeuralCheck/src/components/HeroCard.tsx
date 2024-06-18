@@ -24,9 +24,12 @@ const HeroCard = forwardRef<HeroCardRef, HeroCardProps>(({
   initialActivationFunction,
   result
 }, ref) => {
-  const [layers, setLayers] = useState(initialLayersCount || 1);
+  const maxLayers = 20;
+  const maxNodes = 50;
+
+  const [layers, setLayers] = useState(Math.min(initialLayersCount || 1, maxLayers));
   const [layerConfigs, setLayerConfigs] = useState<LayerConfig[]>(
-    Array(initialLayersCount || 1).fill({ nodes: initialNodesCount || 1, actFunction: initialActivationFunction || 'sigmoid' })
+    Array(Math.min(initialLayersCount || 1, maxLayers)).fill({ nodes: Math.min(initialNodesCount || 1, maxNodes), actFunction: initialActivationFunction || 'sigmoid' })
   );
 
   const activationFunctions = ['sigmoid', 'relu', 'tanh', 'linear'];
@@ -38,8 +41,9 @@ const HeroCard = forwardRef<HeroCardRef, HeroCardProps>(({
   };
 
   const handleLayersInputChange = (value: number) => {
-    setLayers(value);
-    const newLayerConfigs = Array(value).fill({ nodes: initialNodesCount || 1, actFunction: initialActivationFunction || 'sigmoid' });
+    const newValue = Math.min(value, maxLayers);
+    setLayers(newValue);
+    const newLayerConfigs = Array(newValue).fill({ nodes: Math.min(initialNodesCount || 1, maxNodes), actFunction: initialActivationFunction || 'sigmoid' });
     setLayerConfigs(newLayerConfigs);
   };
 
@@ -65,6 +69,7 @@ const HeroCard = forwardRef<HeroCardRef, HeroCardProps>(({
             onChange={(e) => handleLayersInputChange(Number(e.target.value))} 
             className="border rounded p-2 w-full text-center" 
             min="1"
+            max={maxLayers} // max layers set to 20
           />
         </div>
         {layerConfigs.map((config, layerIndex) => (
@@ -74,9 +79,10 @@ const HeroCard = forwardRef<HeroCardRef, HeroCardProps>(({
               <input 
                 type="number" 
                 value={config.nodes} 
-                onChange={(e) => handleLayerChange(layerIndex, 'nodes', Number(e.target.value))} 
+                onChange={(e) => handleLayerChange(layerIndex, 'nodes', Math.min(Number(e.target.value), maxNodes))} 
                 className="border rounded p-2 w-full text-center" 
                 min="1"
+                max={maxNodes} // max nodes set to 50
               />
             </div>
             <div>

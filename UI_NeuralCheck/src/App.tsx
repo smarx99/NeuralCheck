@@ -1,9 +1,14 @@
+// App.tsx
 import React, { useRef, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import HeroCard, { HeroCardRef } from './components/HeroCard';
 import Login from './components/Login';
 import Register from './components/Register';
 import Sidebar from './components/Sidebar';
+import Account from './components/Account';
+import PrivateRoute from './components/PrivateRoute';
 import axios from 'axios';
 
 const initialHeroItems = [
@@ -32,10 +37,13 @@ interface Result {
 }
 
 const App: React.FC = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const heroCardRefs = useRef<(HeroCardRef | null)[]>([]);
   const [results, setResults] = useState<Record<string, Result>>({});
   const [isTraining, setIsTraining] = useState<boolean>(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const [datasets, setDatasets] = useState<string[]>(['breast_cancer.csv']);
 
   const handleStartTraining = async () => {
     const configs = heroCardRefs.current.map(ref => ref?.getConfig());
@@ -48,7 +56,12 @@ const App: React.FC = () => {
     setIsTraining(true);  // Setze den Trainingsstatus auf "true"
 
     try {
-      const response = await axios.post('http://localhost:8001/orch', dataToSend);
+      const token = localStorage.getItem('token');
+      const response = await axios.post('http://localhost:8001/orch', dataToSend, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       console.log('Response:', response.data); // Logge die gesamte Response
       setResults(response.data.results || {});
     } catch (error) {
@@ -62,15 +75,42 @@ const App: React.FC = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  const handleLogout = () => {
+    navigate('/login');
+  };
+
+  const handleUploadDataset = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Simuliere das Hochladen und Hinzufügen des Datensatzes zur Liste
+      setDatasets(prevDatasets => [...prevDatasets, file.name]);
+    }
+  };
+
   return (
-    <Router>
-      <div className="flex">
-        <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-        <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-16'}`}>
+      <div className={`flex-1 transition-all duration-300 ${location.pathname === '/app' && isSidebarOpen ? 'mr-4': 'ml-4'}`}>
+        {location.pathname === '/app' && (
+          <button
+            onClick={handleLogout}
+            className="absolute top-4 right-4 text-gray-700 hover:text-gray-900"
+          >
+            <FontAwesomeIcon icon={faSignOutAlt} size="2x" />
+          </button>
+        )}
+        {location.pathname === '/app' && (
+          <Sidebar 
+            isOpen={isSidebarOpen} 
+            toggleSidebar={toggleSidebar} 
+            datasets={datasets} 
+            onUploadDataset={handleUploadDataset} 
+          />
+        )}
+        <div className={`flex-1 transition-all duration-300 ${location.pathname === '/app' && isSidebarOpen ? 'ml-64' : 'ml-16'}`}>
           <Routes>
-            <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/app" element={
+            <Route path="/login" element={<Login />} />  
+            <Route path="/account" element={<PrivateRoute element={<Account />} />} />     
+            <Route path="/app" element={<PrivateRoute element={
               <div className="relative min-h-screen">
                 <div className="absolute top-4 left-4 text-sm text-gray-700">
                   <label htmlFor="dataset-select" className="mr-2">Used dataset:</label>
@@ -99,17 +139,22 @@ const App: React.FC = () => {
                     onClick={handleStartTraining}
                     className='bg-white border-gray border-4 shadow-lg rounded-lg mt-8 font-medium text-3xl px-8 py-2 transition transform hover:scale-105'
                   >
-                    Start Training!
+                    Start!
                   </button>
                 </div>
               </div>
-            } />
+            } />} />
             <Route path="*" element={<Navigate to="/login" />} />
           </Routes>
         </div>
       </div>
-    </Router>
   );
 };
 
-export default App;
+const AppWithRouter: React.FC = () => (
+  <Router>
+    <App />
+  </Router>
+);
+
+export default AppWithRouter;
