@@ -19,7 +19,7 @@ def upload_data():
         return jsonify({"error": "No file provided"}), 400
 
     file = request.files['file']
-    username = request.form.get('username')  # Annahme: Username wird im Formular übermittelt
+    username = request.form.get('username')  # Annahme: Username wird übermittelt
 
     response, status = data_controller.upload_data(username, file)
     return jsonify(response), status

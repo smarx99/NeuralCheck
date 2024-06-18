@@ -1,17 +1,21 @@
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+# from data-service.app.controllers.DataController import DataController
 import pandas as pd
 
 
 class DataHandler:
+    def __init__(self, data_controller):
+        self.data_controller = data_controller
     def load_dataset(self, dataset_id):
-        dataset = self.data_service.get_dataset(dataset_id)
-        if dataset is not None:
+        response, status_code = self.data_controller.get_dataset_by_dataset_id(dataset_id)
+        if status_code == 200:
+            dataset = response["dataset"]
             df = pd.DataFrame(dataset["data"])
             return df
         else:
-            raise ValueError("Dataset not found in data service.")
+            raise ValueError(response["error"])
 
     def prepare_data(self, data):
 
