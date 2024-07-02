@@ -44,14 +44,23 @@ const App: React.FC = () => {
   const [isTraining, setIsTraining] = useState<boolean>(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const [datasets, setDatasets] = useState<string[]>(['breast_cancer.csv']);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
 
   const handleStartTraining = async () => {
     const configs = heroCardRefs.current.map(ref => ref?.getConfig());
-    const dataToSend = configs.map(config => ({
-      layers: config?.layersCount,
-      nodes_per_layer: config?.layerConfigs.map(layer => layer.nodes),
-      activation_functions: config?.layerConfigs.map(layer => layer.actFunction),
-    }));
+    const selectElement = document.getElementById("dataset-select") as HTMLSelectElement | null;
+    const selectedIndex = selectElement?.selectedIndex ?? 0;
+    const selectedDataset = datasets[selectedIndex];
+
+    const dataToSend = {
+        dataset_id: selectedDataset,
+        configurations: configs.map(config => ({
+          layers: config?.layersCount,
+          nodes_per_layer: config?.layerConfigs.map(layer => layer.nodes),
+          activation_functions: config?.layerConfigs.map(layer => layer.actFunction),
+      }))
+    };
 
     setIsTraining(true);  // Setze den Trainingsstatus auf "true"
 
@@ -79,13 +88,50 @@ const App: React.FC = () => {
     navigate('/login');
   };
 
-  const handleUploadDataset = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+  const handleUploadDataset = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Simuliere das Hochladen und Hinzufügen des Datensatzes zur Liste
-      setDatasets(prevDatasets => [...prevDatasets, file.name]);
+      const formData = new FormData();
+      formData.append('file', file);
+
+      // Benutzernamen aus dem localStorage abrufen
+      const username = localStorage.getItem('username');
+      if (username) {
+        formData.append('username', username);
+
+        try {
+          const token = localStorage.getItem('token');
+          const response = await axios.post('http://localhost:8004/upload_dataset', formData, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data'
+            }
+          });
+
+          console.log('Upload Response:', response.data); // Ausgabe der Antwort
+
+          if (response.status === 200) {
+            // Annahme: der Datensatz wird in der Datenbank gespeichert
+            setDatasets(prevDatasets => [...prevDatasets, file.name]);
+
+            if (fileInputRef.current) {
+              fileInputRef.current.value = '';
+            }
+          } else {
+            console.error('Error uploading dataset:', response.data);
+          }
+
+        } catch (error) {
+          console.error('Error uploading dataset:', error);
+        }
+      } else {
+        console.error('No username found in localStorage');
+      }
     }
   };
+
+
 
   return (
       <div className={`flex-1 transition-all duration-300 ${location.pathname === '/app' && isSidebarOpen ? 'mr-4': 'ml-4'}`}>
@@ -102,7 +148,8 @@ const App: React.FC = () => {
             isOpen={isSidebarOpen} 
             toggleSidebar={toggleSidebar} 
             datasets={datasets} 
-            onUploadDataset={handleUploadDataset} 
+            onUploadDataset={handleUploadDataset}
+            fileInputRef={fileInputRef}
           />
         )}
         <div className={`flex-1 transition-all duration-300 ${location.pathname === '/app' && isSidebarOpen ? 'ml-64' : 'ml-16'}`}>
@@ -115,7 +162,9 @@ const App: React.FC = () => {
                 <div className="absolute top-4 left-4 text-sm text-gray-700">
                   <label htmlFor="dataset-select" className="mr-2">Used dataset:</label>
                   <select id="dataset-select" className="border rounded p-1">
-                    <option value="breast_cancer.csv">breast_cancer.csv</option>
+                    {datasets.map((dataset, index) => (
+                        <option key={index} value={dataset}>{dataset}</option>
+                    ))}
                   </select>
                 </div>
                 <p className="text-5xl w-full font-bold mt-10 mb-10 flex justify-center text-primary">

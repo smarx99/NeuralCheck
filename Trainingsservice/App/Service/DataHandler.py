@@ -5,13 +5,20 @@ import pandas as pd
 
 
 class DataHandler:
-    def load_dataset(self):
+    def load_dataset(self, dataset_id):
+        try:
+            data_service_url = f"http://127.0.0.1:8004/dataset/{dataset_id}"
+            response = requests.get(data_service_url)
+            if response.status_code != 200:
+                raise Exception(f"Failed to load dataset {dataset_id} from DataService")
 
-        # Load the dataset and create a dataframe
-        df = pd.read_csv("Trainingsservice/breast_cancer.csv", index_col="id")
+            df = pd.DataFrame(response.json()["dataset"]["data"])
+            # df.set_index("id", inplace=True)  # Falls die ID als Index verwendet werden soll
 
-        # print(df.head())
-        return df
+            return df
+        except Exception as e:
+            print(f"Error loading dataset {dataset_id}:", e)
+            return pd.DataFrame()
 
     def prepare_data(self, data):
 
@@ -31,8 +38,8 @@ class DataHandler:
     def split_data(self, data):
 
         # define feature and target vector
-        x = data.iloc[:, 1:31]
-        y = data["diagnosis"]
+        x = data.iloc[:, 1:]  # Alle Spalten außer der ersten
+        y = data.iloc[:, 0]   # Erste Spalte ist Labels
 
         # count the number of features
         num_features = x.shape[1]

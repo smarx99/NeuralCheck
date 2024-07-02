@@ -1,3 +1,4 @@
+import pandas as pd
 from flask import Flask, request, jsonify
 from App.Service.DataHandler import DataHandler
 from App.Controller.NetworkController import NetworkController
@@ -13,10 +14,15 @@ network_service = NetworkService()
 network_controller = NetworkController(network_service)
 
 
-@app.route('/load_data', methods=['GET'])
-def load_data():
-    data = data_handler.load_dataset()
-    return jsonify(data.head().to_dict()), 200
+@app.route('/dataset/<dataset_id>', methods=['GET'])
+def get_dataset(dataset_id):
+    try:
+        # Hier anstelle von "breast_cancer.csv" den entsprechenden dataset_id verwenden
+        df = data_handler.load_dataset(dataset_id)
+        return jsonify({"dataset": df.to_dict()}), 200
+    except Exception as e:
+        print("Error loading dataset:", e)
+        return jsonify({"error": "Failed to load dataset"}), 500
 
 @app.route('/prepare_data', methods=['GET'])
 def prepare_data():
@@ -45,9 +51,12 @@ def train_network():
         activation_functions=data.get('activation_functions'),
         result=None
     )
-    # Load and prepare data
-    data = data_handler.load_dataset()
-    prepared_data = data_handler.prepare_data(data)
+    # Load data
+    dataset_id = data.get('dataset_id')
+    df = data_handler.load_dataset(dataset_id)
+
+    # Prepare data
+    prepared_data = data_handler.prepare_data(df)
     x_train, x_test, y_train, y_test, num_features = data_handler.split_data(prepared_data)
 
     # Create, train, and evaluate network

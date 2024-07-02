@@ -38,12 +38,19 @@ def print_configs():
     if(token):
         request_data = request.json
         print("Request data:", request_data)
-        configs = controller.process_request(request_data)
+
+        dataset_id = request_data.get("dataset_id")
+        if not dataset_id:
+           return jsonify({'message': 'Dataset ID is missing!'}), 400
+
+        configurations = request_data.get("configurations", [])  # Konfigurationen aus dem Datenobjekt
+        configs = controller.process_request(configurations, dataset_id)  # Übergabe der Konfigurationen und der Dataset ID
+        #configs = controller.process_request(request_data)
         print("Configs:", configs)
 
         training_service_url = "http://127.0.0.1:8002/train"
 
-        results = controller.receive_results(configs, training_service_url)
+        results = controller.receive_results(configurations, training_service_url, dataset_id)
 
         results, best_key = controller.return_results_recommendations(results)
 

@@ -13,8 +13,10 @@ const Login: React.FC = () => {
       const response = await axios.post('http://localhost:8003/login', { username, password });
       const token = response.data.token;
 
+
       if (token) {
         localStorage.setItem('token', token);
+        localStorage.setItem("username", username);
         navigate('/app'); // Weiterleitung zur Haupt-App-Seite
       } else {
         setError('Login failed. Please try again.');

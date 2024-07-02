@@ -1,5 +1,5 @@
 // components/Sidebar.tsx
-import React from 'react';
+import React, {RefObject} from 'react';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import { BsClipboardData } from "react-icons/bs";
 import { MdOutlineAccountCircle } from "react-icons/md";
@@ -10,9 +10,10 @@ interface SidebarProps {
   toggleSidebar: () => void;
   datasets: string[];
   onUploadDataset: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  fileInputRef: RefObject<HTMLInputElement>;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, datasets, onUploadDataset }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, datasets, onUploadDataset, fileInputRef}) => {
   return (
     <div className={`fixed top-0 left-0 h-full ${isOpen ? 'w-60' : 'w-16'} bg-blue-800 text-white transition-width duration-300`}>
       <div className="flex items-center justify-between p-4">
@@ -44,6 +45,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, datasets, onUp
               type="file"
               accept=".csv"
               onChange={onUploadDataset}
+              ref={fileInputRef}
               className="hidden"
               id="file-upload"
             />
