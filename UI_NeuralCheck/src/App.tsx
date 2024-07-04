@@ -1,5 +1,5 @@
 // App.tsx
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
@@ -46,6 +46,30 @@ const App: React.FC = () => {
   const [datasets, setDatasets] = useState<string[]>(['breast_cancer.csv']);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+
+
+
+  useEffect(() => {
+    const fetchDatasets = async () => {
+      const username = localStorage.getItem('username');
+      const token = localStorage.getItem('token');
+      if (username && token) {
+        try {
+          const response = await axios.get(`http://localhost:8004/datasets/${username}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          if (response.status === 200) {
+            setDatasets(response.data.datasets.map((dataset: any) => dataset.dataset_name));
+          }
+        } catch (error) {
+          console.error('Error fetching datasets:', error);
+        }
+      }
+    };
+    fetchDatasets();
+  }, []);
 
   const handleStartTraining = async () => {
     const configs = heroCardRefs.current.map(ref => ref?.getConfig());

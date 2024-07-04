@@ -80,7 +80,7 @@ class DataService:
             datasets = list(self.collection.find({"username": username}, {"data": False}))
             # Konvertiere ObjectId in String für bessere Serialisierung
             for dataset in datasets:
-                dataset["_id"] = str(dataset["_id"])
+                dataset["dataset_name"] = str(dataset["dataset_name"])
             return datasets
         except Exception as e:
             raise Exception(f"Failed to retrieve datasets for user '{username}': {str(e)}")
