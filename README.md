@@ -1,4 +1,4 @@
-# Neural-Check
+# NeuralCheck
 
 **NeuralCheck** simplifies the use of neural networks, allowing non-specialized users to configure and compare the performance of three neural network architectures, making AI solutions more accessible.
 This documentation will guide you through setting up the development environment and provide an overview of the available API endpoints and their functionalities.
