@@ -54,7 +54,7 @@ const App: React.FC = () => {
     const selectedDataset = datasets[selectedIndex];
 
     const dataToSend = {
-        dataset_id: selectedDataset,
+        dataset_name: selectedDataset,
         configurations: configs.map(config => ({
           layers: config?.layersCount,
           nodes_per_layer: config?.layerConfigs.map(layer => layer.nodes),
@@ -112,7 +112,6 @@ const App: React.FC = () => {
           console.log('Upload Response:', response.data); // Ausgabe der Antwort
 
           if (response.status === 200) {
-            // Annahme: der Datensatz wird in der Datenbank gespeichert
             setDatasets(prevDatasets => [...prevDatasets, file.name]);
 
             if (fileInputRef.current) {

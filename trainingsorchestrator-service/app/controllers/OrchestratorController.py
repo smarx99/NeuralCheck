@@ -17,12 +17,12 @@ class OrchestratorController:
             print("Error fetching request:", e)
             return None 
     
-    def process_request(self, configurations, dataset_id):
+    def process_request(self, configurations):
         try:
             print("Processing request with configurations:", configurations)
             self.orchestrator_service.splitting_configs(configurations)
             print("Processed configs:", self.orchestrator_service.training_queue)
-            return self.orchestrator_service.training_queue, dataset_id  # Rückgabe der Training Queue und der Dataset ID
+            return self.orchestrator_service.training_queue  # Rückgabe der Training Queue und der Dataset ID
             #print("Processing request:", json_request)
             #self.orchestrator_service.splitting_configs(json_request)
             #print("Processed configs:", self.orchestrator_service.training_queue)
@@ -31,20 +31,28 @@ class OrchestratorController:
             print("An error occurred while processing the request:", e)
             return ''
         
-    def receive_results(self, configurations, trainings_url, dataset_id):
+    def receive_results(self, configs, trainings_url, dataset_name):
         try:
-            data_service_url = f"http://127.0.0.1:8004/dataset/{dataset_id}"
-            response = requests.get(data_service_url)
-            if response.status_code != 200:
-                raise Exception("Failed to load dataset from DataService")
+            #data_service_url = f"http://127.0.0.1:8004/dataset/{dataset_name}"
+            #response = requests.get(data_service_url)
+            #if response.status_code != 200:
+            #    raise Exception("Failed to load dataset from DataService")
 
-            dataset = response.json()["dataset"]
+            #dataset = response.json()
+            #print("Dataset loaded successfully:", dataset)
+            # Debugging-Ausgabe, um zu sehen, was genau in dataset_json ist
+            #print("Dataset JSON type:", type(dataset))
+            #if isinstance(dataset, list):
+            #    print("Dataset JSON list length:", len(dataset))
 
             results = {}
-            for i, config in enumerate(configurations):
-                print(f"Config before conversion {i+1}:", config_dict)
+            #dataset_data = dataset.get("data", [])
+            #if not isinstance(dataset_data, list):
+            #    raise ValueError("Dataset 'data' field is not a list.")
+            for i, config in enumerate(configs):
+                print(f"Config before conversion {i+1}:", config)
                 config_dict = self.orchestrator_service.configuration_to_dict(config)
-                config["dataset"] = dataset["data"]
+                config_dict["dataset_name"] = dataset_name
                 print(f"Sending config {i+1} to training service:", config_dict)  # Logge die zu sendenden Konfigurationen
                 response = requests.post(trainings_url, json=config_dict)
                 if response.status_code == 200:
@@ -53,7 +61,7 @@ class OrchestratorController:
                     results[f'Config{i+1}'] = {"error": "Training failed"}
             return results
         except Exception as e:
-            print("An Error occured whule receiving the results: ", e)
+            print("An Error occured while receiving the results: ", e)
             return ''
     
     def return_results_recommendations(self, results):

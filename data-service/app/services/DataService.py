@@ -40,14 +40,20 @@ class DataService:
             print(f"Validation error: {str(e)}")
             raise
 
-    def save_data(self, username, file):
+    def save_data(self, username, dataset_name, file):
         # Überprüfe ob datensatz valid ist
         if self.validate_data(file):
             try:
+                # Überprüfe, ob ein Datensatz mit demselben Namen bereits existiert
+                existing_dataset = self.collection.find_one({"username": username, "dataset_name": dataset_name})
+                if existing_dataset:
+                    raise ValueError("This dataset was already uploaded.")
+
                 file.seek(0)  # Setze den Dateizeiger erneut auf den Anfang für pandas
                 df = pd.read_csv(file)
                 # Wandle DataFrame in dictionary um  für MongoDB und füge username dazu
                 dataset_document = {
+                    "dataset_name": dataset_name,
                     "username": username,
                     "data": df.to_dict(orient='records')
                 }
@@ -55,10 +61,10 @@ class DataService:
                 # Füge datensatz in MongoDB collection ein
                 result = self.collection.insert_one(dataset_document)
                 if result.acknowledged:
-                   print(f"DataService: Successfully uploaded dataset with ID: {str(result.inserted_id)}")
+                   print(f"DataService: Successfully uploaded dataset with dataset_name: {dataset_name}")
                 else:
                    print("DataService: Insertion not acknowledged")
-                return f"Successfully uploaded dataset with ID: {str(result.inserted_id)}"
+                return f"Successfully uploaded dataset with dataset_name: {dataset_name}"
             except errors.PyMongoError as e:
                 print(f"DataService: MongoDB error: {str(e)}")
                 raise
@@ -79,16 +85,16 @@ class DataService:
         except Exception as e:
             raise Exception(f"Failed to retrieve datasets for user '{username}': {str(e)}")
 
-    def get_dataset_by_dataset_id(self, dataset_id):
+    def get_dataset_by_dataset_name(self, dataset_name):
         try:
             # Rufe datensatz anhand dataset_id auf
-            dataset = self.collection.find_one({"_id": ObjectId(dataset_id)})
+            dataset = self.collection.find_one({"dataset_name": dataset_name})
             # Konvertiere ObjectId in String für bessere Serialisierung
             if dataset:
                 dataset["_id"] = str(dataset["_id"])
                 return dataset
             else:
-                raise ValueError(f"Dataset with ID '{dataset_id}' not found.")
+                raise ValueError(f"Dataset with name '{dataset_name}' not found.")
         except Exception as e:
-            raise Exception(f"Failed to retrieve dataset with ID '{dataset_id}': {str(e)}")
+            raise Exception(f"Failed to retrieve dataset with name '{dataset_name}': {str(e)}")
 

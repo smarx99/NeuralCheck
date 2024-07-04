@@ -2,22 +2,29 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import pandas as pd
+import requests
 
 
 class DataHandler:
-    def load_dataset(self, dataset_id):
+    def load_dataset(self, dataset_name):
         try:
-            data_service_url = f"http://127.0.0.1:8004/dataset/{dataset_id}"
+            data_service_url = f"http://127.0.0.1:8004/dataset/{dataset_name}"
             response = requests.get(data_service_url)
             if response.status_code != 200:
-                raise Exception(f"Failed to load dataset {dataset_id} from DataService")
+                raise Exception(f"Failed to load dataset {dataset_name} from DataService")
 
-            df = pd.DataFrame(response.json()["dataset"]["data"])
-            # df.set_index("id", inplace=True)  # Falls die ID als Index verwendet werden soll
+            json_response = response.json()
+            #print("JSON response from DataService:", json_response)
+
+            # Extract the data from the nested JSON response
+            data_list = json_response['dataset'][0]['dataset']['data']
+
+            # Convert the data to a DataFrame
+            df = pd.DataFrame(data_list)
 
             return df
         except Exception as e:
-            print(f"Error loading dataset {dataset_id}:", e)
+            print(f"Error loading dataset {dataset_name}:", e)
             return pd.DataFrame()
 
     def prepare_data(self, data):

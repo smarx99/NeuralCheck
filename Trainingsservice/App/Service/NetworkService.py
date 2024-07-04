@@ -10,7 +10,9 @@ class NetworkService:
 
     def create_network(self, configurations, num_features):
 
+        #print("num features", num_features)
         num_layers = configurations.layers
+        #print("Configuration Layers:", num_layers)
         num_nodes_per_layer = configurations.nodes_per_layer
         activation_function = configurations.activation_functions
 
