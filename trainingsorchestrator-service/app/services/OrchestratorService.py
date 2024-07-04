@@ -2,34 +2,23 @@ from models.Configuration import Configuration
 
 class OrchestratorService:
 
-    def __init__(self):
-        self.training_queue = []
+    def __init__(self, db):
+        self.configs = db.configs
 
     def splitting_configs(self, configurations):
         try:
-            print("Splitting configs:", configurations)
-            self.training_queue = []
+            training_queue = []
             for config in configurations:
                 layers = len(config['nodes_per_layer'])  # Anzahl der Schichten ist die Länge der nodes_per_layer Liste
                 #layers = config['layers']
                 nodes_per_layer = config['nodes_per_layer']  # nodes_per_layer sollte eine Liste sein
                 activation_functions = config['activation_functions']
-                self.training_queue.append(Configuration(layers, nodes_per_layer, activation_functions))
-            print("Training queue:", self.training_queue)
+                training_queue.append(Configuration(layers, nodes_per_layer, activation_functions))
+            return training_queue
         except Exception as e:
             print("An error occured while splitting the received configs: ", e)
-            self.training_queue = Configuration('', '', '')
-        print("Splitting configs:", configurations) # Logge die aufgeteilten Konfigurationen
-
-    def configuration_to_dict(self, config):
-        config_dict = {
-            "layers": config.layers,  # layers sollte eine Ganzzahl sein
-            "nodes_per_layer": config.nodes_per_layer,  # nodes_per_layer sollte eine Liste sein
-            "activation_functions": config.activation_functions,
-            "result": config.result
-        }
-        print("Configuration to dict:", config_dict)
-        return config_dict
+            training_queue = Configuration('', '', '')
+            return training_queue
     
     def recommend_config(self, configs):
         try:
@@ -44,3 +33,14 @@ class OrchestratorService:
         except Exception as e:
             print("An Error occured during returning recommendation: ",e)
             return ''
+        
+    def save_configs(self, configs, user, dataset_id):
+        configs_list = []
+        for config in configs:
+            configs_list.append(config.to_dict())
+        configs_dict = {
+            'username': user,
+            'dataset_id': dataset_id,
+            'configurations': configs_list
+        }
+        self.configs.insert_one(configs_dict)
