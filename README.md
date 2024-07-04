@@ -32,7 +32,7 @@ The Training Service will run under port 8002. The service provides the followin
 
 | Endpoint          | Description                 |
 |-------------------|-----------------------------|
-| `GET /dataset/<dataset_id>` | Used to load a dataset.
+| `GET /dataset/<dataset_name>` | Used to load a dataset.
 | `GET /prepare_data` | Used to prepare the data.
 | `GET /train`	| Used to train and evaluate the dataset.
 
@@ -60,7 +60,7 @@ The Data Service will run under port 8004. The service provides the following in
 |-------------------|-----------------------------|
 | `POST /upload_dataset` | Used to upload a new dataset.
 | `GET /datasets/<username>` | Used to retrieve all datasets associated with a specific user.
-| `GET /dataset/<dataset_id>`	| Used to retrieve a dataset by its specific ID.
+| `GET /dataset/<dataset_name>`	| Used to retrieve a dataset by its specific dataset name.
 
 ## Frontend
 
