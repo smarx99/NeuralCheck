@@ -6,25 +6,14 @@ import requests
 
 
 class DataHandler:
-    def load_dataset(self, dataset_name):
+    def transform_dataset(self, dataset):
         try:
-            data_service_url = f"http://127.0.0.1:8004/dataset/{dataset_name}"
-            response = requests.get(data_service_url)
-            if response.status_code != 200:
-                raise Exception(f"Failed to load dataset {dataset_name} from DataService")
-
-            json_response = response.json()
-            #print("JSON response from DataService:", json_response)
-
-            # Extract the data from the nested JSON response
-            data_list = json_response['dataset'][0]['dataset']['data']
-
             # Convert the data to a DataFrame
-            df = pd.DataFrame(data_list)
-
+            df = pd.DataFrame(dataset)
+            print(f"dataframe: {df.head(4)}")
             return df
         except Exception as e:
-            print(f"Error loading dataset {dataset_name}:", e)
+            print(f"Error loading dataset {dataset}:", e)
             return pd.DataFrame()
 
     def prepare_data(self, data):

@@ -43,7 +43,7 @@ def configuration_to_dict(config):
 def train_network():
     # Extrahiere die Hyperparameter aus der Anfrage
     data = request.get_json()
-    print("Received data for training:", data)  # Log received data
+    print("Received data for training")  # Log received data
 
     print("Layers:", data.get('layers'))
 
@@ -56,9 +56,9 @@ def train_network():
     print("Configuration:", configuration)
 
     # Load data
-    dataset_name = data.get("dataset_name")
+    dataset = data['data']['data']
     #print("Datasetname:", dataset_name)
-    df = data_handler.load_dataset(dataset_name)
+    df = data_handler.transform_dataset(dataset)
     #print("Loaded Dataframe:", df.head())
 
     # Prepare data
