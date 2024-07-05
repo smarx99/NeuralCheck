@@ -1,5 +1,5 @@
 // App.tsx
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
@@ -47,6 +47,30 @@ const App: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
 
+
+
+  useEffect(() => {
+    const fetchDatasets = async () => {
+      const username = localStorage.getItem('username');
+      const token = localStorage.getItem('token');
+      if (username && token) {
+        try {
+          const response = await axios.get(`http://localhost:8004/datasets/${username}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          if (response.status === 200) {
+            setDatasets(response.data[0].datasets.map((dataset: any) => dataset.dataset_name));
+          }
+        } catch (error) {
+          console.error('Error fetching datasets:', error);
+        }
+      }
+    };
+    fetchDatasets();
+  }, []);
+
   const handleStartTraining = async () => {
     const configs = heroCardRefs.current.map(ref => ref?.getConfig());
     const selectElement = document.getElementById("dataset-select") as HTMLSelectElement | null;
@@ -54,7 +78,7 @@ const App: React.FC = () => {
     const selectedDataset = datasets[selectedIndex];
 
     const dataToSend = {
-        dataset_id: selectedDataset,
+        dataset_name: selectedDataset,
         configurations: configs.map(config => ({
           layers: config?.layersCount,
           nodes_per_layer: config?.layerConfigs.map(layer => layer.nodes),
@@ -86,6 +110,7 @@ const App: React.FC = () => {
 
   const handleLogout = () => {
     navigate('/login');
+    window.location.reload();
   };
 
 
@@ -112,7 +137,6 @@ const App: React.FC = () => {
           console.log('Upload Response:', response.data); // Ausgabe der Antwort
 
           if (response.status === 200) {
-            // Annahme: der Datensatz wird in der Datenbank gespeichert
             setDatasets(prevDatasets => [...prevDatasets, file.name]);
 
             if (fileInputRef.current) {

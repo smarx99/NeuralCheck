@@ -36,14 +36,15 @@ def upload_data():
 def get_user_datasets(username):
     try:
         datasets = data_controller.get_user_datasets(username)
-        return jsonify({"datasets": datasets}), 200
+        return jsonify(datasets), 200
     except Exception as e:
+        print(e)
         return jsonify({"error": str(e)}), 400
 
-@app.route('/dataset/<dataset_id>', methods=['GET'])
-def get_dataset_by_dataset_id(dataset_id):
+@app.route('/dataset/<dataset_name>', methods=['GET'])
+def get_dataset_by_dataset_name(dataset_name):
     try:
-        dataset = data_controller.get_dataset_by_dataset_id(dataset_id)
+        dataset = data_controller.get_dataset_by_dataset_name(dataset_name)
         return jsonify({"dataset": dataset}), 200
     except ValueError as e:
         return jsonify({"error": str(e)}), 404

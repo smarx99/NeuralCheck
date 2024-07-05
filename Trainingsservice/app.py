@@ -14,11 +14,10 @@ network_service = NetworkService()
 network_controller = NetworkController(network_service)
 
 
-@app.route('/dataset/<dataset_id>', methods=['GET'])
-def get_dataset(dataset_id):
+@app.route('/dataset/<dataset_name>', methods=['GET'])
+def get_dataset(dataset_name):
     try:
-        # Hier anstelle von "breast_cancer.csv" den entsprechenden dataset_id verwenden
-        df = data_handler.load_dataset(dataset_id)
+        df = data_handler.load_dataset(dataset_name)
         return jsonify({"dataset": df.to_dict()}), 200
     except Exception as e:
         print("Error loading dataset:", e)
@@ -45,18 +44,26 @@ def train_network():
     # Extrahiere die Hyperparameter aus der Anfrage
     data = request.get_json()
     print("Received data for training:", data)  # Log received data
+
+    print("Layers:", data.get('layers'))
+
     configuration = Configuration(
         layers=data.get('layers'),
         nodes_per_layer=data.get('nodes_per_layer'),
         activation_functions=data.get('activation_functions'),
         result=None
     )
+    print("Configuration:", configuration)
+
     # Load data
-    dataset_id = data.get('dataset_id')
-    df = data_handler.load_dataset(dataset_id)
+    dataset_name = data.get("dataset_name")
+    #print("Datasetname:", dataset_name)
+    df = data_handler.load_dataset(dataset_name)
+    #print("Loaded Dataframe:", df.head())
 
     # Prepare data
     prepared_data = data_handler.prepare_data(df)
+    #print("Prepared Dataframe:", df.head())
     x_train, x_test, y_train, y_test, num_features = data_handler.split_data(prepared_data)
 
     # Create, train, and evaluate network
@@ -67,6 +74,7 @@ def train_network():
     configuration.result = test_acc
     
     # return configuration
+    print("Ende Configuration:", configuration)
     return jsonify(configuration_to_dict(configuration)), 200
 
 

@@ -8,7 +8,7 @@ class DataController:
         try:
             print(f"DataController: Uploading dataset for user: {username}, file: {file.filename}")
             # Speichern des Datensatzes und message Rückmeldung von DataService
-            message = self.data_service.save_data(username, file)
+            message = self.data_service.save_data(username, file.filename, file)
             return {"message": message}, 200
         except ValueError as e:
             print(f"ValueError: {str(e)}")
@@ -29,10 +29,10 @@ class DataController:
             # Fehlermeldung wenn Fehler während Abrufens der Datensätze
             return {"error": str(e)}, 400
 
-    def get_dataset_by_dataset_id(self, dataset_id):
+    def get_dataset_by_dataset_name(self, dataset_name):
         try:
-            # Abrufen des Datensatzes anhand dataset_id
-            dataset = self.data_service.get_dataset_by_dataset_id(dataset_id)
+            # Abrufen des Datensatzes anhand dataset_name
+            dataset = self.data_service.get_dataset_by_dataset_name(dataset_name)
             if dataset:
                 return {"dataset": dataset}, 200
             else:

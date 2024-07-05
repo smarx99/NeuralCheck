@@ -46,9 +46,9 @@ def print_configs():
         request_data = request.json
         print("Request data:", request_data)
 
-        dataset_id = request_data.get("dataset_id")
-        if not dataset_id:
-           return jsonify({'message': 'Dataset ID is missing!'}), 400
+        dataset_name = request_data.get("dataset_name")
+        if not dataset_name:
+           return jsonify({'message': 'dataset_name is missing!'}), 400
 
         configurations = request_data.get("configurations", [])  # Konfigurationen aus dem Datenobjekt
         splitted_configs = controller.process_request(configurations, user, dataset_id)  
