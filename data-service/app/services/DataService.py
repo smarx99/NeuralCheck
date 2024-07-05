@@ -84,10 +84,13 @@ class DataService:
         except Exception as e:
             raise Exception(f"Failed to retrieve datasets for user '{username}': {str(e)}")
 
-    def get_dataset_by_dataset_name(self, dataset_name):
+    def get_dataset_by_dataset_name(self, dataset_name, username):
         try:
             # Rufe datensatz anhand dataset_id auf
-            dataset = self.collection.find_one({"dataset_name": dataset_name})
+            dataset = self.collection.find_one(
+            {"dataset_name": dataset_name, "username": username},
+            {"data": 1}
+            )
             # Konvertiere ObjectId in String für bessere Serialisierung
             if dataset:
                 dataset["_id"] = str(dataset["_id"])

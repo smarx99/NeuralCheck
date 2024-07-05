@@ -30,10 +30,10 @@ class DataController:
             # Fehlermeldung wenn Fehler während Abrufens der Datensätze
             return {"error": str(e)}, 400
 
-    def get_dataset_by_dataset_name(self, dataset_name):
+    def get_dataset_by_dataset_name(self, dataset_name, username):
         try:
             # Abrufen des Datensatzes anhand dataset_name
-            dataset = self.data_service.get_dataset_by_dataset_name(dataset_name)
+            dataset = self.data_service.get_dataset_by_dataset_name(dataset_name, username)
             if dataset:
                 return {"dataset": dataset}, 200
             else:

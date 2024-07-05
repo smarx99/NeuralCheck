@@ -45,18 +45,16 @@ def print_configs():
     
     if(token):
         request_data = request.json
-        print("Request data:", request_data)
-
         dataset_name = request_data.get("dataset_name")
         if not dataset_name:
            return jsonify({'message': 'dataset_name is missing!'}), 400
 
         configurations = request_data.get("configurations", [])  # Konfigurationen aus dem Datenobjekt
-        splitted_configs = controller.process_request(configurations, user, dataset_id)  
+        splitted_configs = controller.process_request(configurations, user, dataset_name)  
 
         training_service_url = "http://127.0.0.1:8002/train"
 
-        results = controller.receive_results(splitted_configs, training_service_url, dataset_id)
+        results = controller.receive_results(splitted_configs, training_service_url, dataset_name, user)
 
         results, best_key = controller.return_results_recommendations(results)
 

@@ -49,19 +49,15 @@ def get_user_datasets(username):
     else:
         return jsonify({'message': 'Token validation error!'}), 500
 
-@app.route('/dataset/<dataset_name>', methods=['GET'])
-def get_dataset_by_dataset_name(dataset_name):
-    token = validate_token()
-    if(token):
-        try:
-            dataset = data_controller.get_dataset_by_dataset_name(dataset_name)
-            return jsonify({"dataset": dataset}), 200
-        except ValueError as e:
-            return jsonify({"error": str(e)}), 404
-        except Exception as e:
-            return jsonify({"error": str(e)}), 400
-    else:
-        return jsonify({'message': 'Token validation error!'}), 500
+@app.route('/dataset/<username>/<dataset_name>', methods=['GET'])
+def get_dataset_by_dataset_name(dataset_name, username):
+    try:
+        dataset = data_controller.get_dataset_by_dataset_name(dataset_name, username)
+        return jsonify(dataset), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 def validate_token():
     # Token Validierung

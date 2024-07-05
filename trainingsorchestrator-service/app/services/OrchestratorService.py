@@ -34,13 +34,16 @@ class OrchestratorService:
             print("An Error occured during returning recommendation: ",e)
             return ''
         
-    def save_configs(self, configs, user, dataset_id):
-        configs_list = []
-        for config in configs:
-            configs_list.append(config.to_dict())
-        configs_dict = {
-            'username': user,
-            'dataset_id': dataset_id,
-            'configurations': configs_list
-        }
-        self.configs.insert_one(configs_dict)
+    def save_configs(self, configs, user, dataset_name):
+        try:
+            configs_list = []
+            for config in configs:
+                configs_list.append(config.to_dict())
+            configs_dict = {
+                'username': user,
+                'dataset_name': dataset_name,
+                'configurations': configs_list
+            }
+            self.configs.insert_one(configs_dict)
+        except Exception as e:
+            print("An Error occured during saving configs: ",e)
