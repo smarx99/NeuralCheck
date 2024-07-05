@@ -1,3 +1,4 @@
+import requests
 from services.DataService import DataService
 
 class DataController:
@@ -41,3 +42,12 @@ class DataController:
         except Exception as e:
             # Fehlermeldung wenn Fehler während Abrufens des Datensatzes
             return {"error": str(e)}, 400
+        
+    def validate_token(self, token):
+        try:
+            auth_service_url = "http://localhost:8003/validate-auth"
+            response = requests.post(auth_service_url, json={'token': token})
+            return response.json()
+        except Exception as e:
+            print(e)
+            return None

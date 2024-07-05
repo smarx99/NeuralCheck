@@ -42,6 +42,7 @@ def print_configs():
         return jsonify({'message': 'Token is missing!'}), 403
     token = controller.validate_token(token)
     user = token['data']['username']
+    
     if(token):
         request_data = request.json
         print("Request data:", request_data)

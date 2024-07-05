@@ -60,7 +60,6 @@ class OrchestratorController:
             print("An Error occured during returning results and recommendation: ",e)
             return ''
 
-    # Token Validierung    
     def validate_token(self, token):
         try:
             auth_service_url = "http://localhost:8003/validate-auth"
