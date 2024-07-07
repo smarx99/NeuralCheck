@@ -19,7 +19,7 @@ To setup the development environment, first create a new conda environment and i
 
 ```
 #Create a new conda environment for the project
-conda create -n neural-check python=3.11 -y
+conda create -n neural-check python=3.12.3 -y
 conda activate neural-check
 
 # Install all packages
@@ -70,3 +70,9 @@ npm install
 npm run dev
 ```
 Open the browser at http://localhost:5173/.
+
+## Start Application
+
+The scripts `start_all_windows.bat` and `start_all_linux_macOS.sh` start all services required for the application.
+Just run `./start_all_windows.bat` in your bash script for Windows. 
+For MacOS and Linux, make the script executable `chmod +x start_all.sh` in your shell script and run the script with `./start_all.sh`.

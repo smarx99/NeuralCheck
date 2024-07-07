@@ -32,6 +32,10 @@ const initialHeroItems = [
   },
 ];
 
+interface Dataset {
+  dataset_name: string;
+}
+
 interface Result {
   result: number;
 }

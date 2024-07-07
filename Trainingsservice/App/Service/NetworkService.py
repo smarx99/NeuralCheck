@@ -33,7 +33,7 @@ class NetworkService:
 
         # or adam as optimizer
         network.compile(optimizer='SGD', loss='binary_crossentropy', metrics=['accuracy'])
-        network.fit(x_train, y_train, batch_size=50, epochs=100)
+        network.fit(x_train, y_train, batch_size=32, epochs=70)
 
         return network
 
