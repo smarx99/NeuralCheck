@@ -18,6 +18,7 @@ const Login: React.FC = () => {
         localStorage.setItem('token', token);
         localStorage.setItem("username", username);
         navigate('/app'); // Weiterleitung zur Haupt-App-Seite
+        window.location.reload();
       } else {
         setError('Login failed. Please try again.');
       }

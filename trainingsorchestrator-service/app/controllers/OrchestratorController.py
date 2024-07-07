@@ -3,58 +3,31 @@ from services.OrchestratorService import OrchestratorService
 
 class OrchestratorController:
 
-    def __init__(self, url):
+    def __init__(self, url, db):
         self.url = url
-        self.orchestrator_service = OrchestratorService()
-
-    def receive_request(self, request_data):
-        try:
-            # response = requests.get(self.url)
-            # response.raise_for_status()  
-            # return response.json()
-            return request_data
-        except requests.RequestException as e:
-            print("Error fetching request:", e)
-            return None 
+        self.orchestrator_service = OrchestratorService(db)
+        self.configs = db.configs
     
-    def process_request(self, configurations):
+    def process_request(self, configurations, user, dataset_name):
         try:
-            print("Processing request with configurations:", configurations)
-            self.orchestrator_service.splitting_configs(configurations)
-            print("Processed configs:", self.orchestrator_service.training_queue)
-            return self.orchestrator_service.training_queue  # Rückgabe der Training Queue und der Dataset ID
-            #print("Processing request:", json_request)
-            #self.orchestrator_service.splitting_configs(json_request)
-            #print("Processed configs:", self.orchestrator_service.training_queue)
-            #return self.orchestrator_service.training_queue
+            configs = self.orchestrator_service.splitting_configs(configurations)
+            self.orchestrator_service.save_configs(configs, user, dataset_name)
+            return configs 
         except Exception as e:
             print("An error occurred while processing the request:", e)
             return ''
         
-    def receive_results(self, configs, trainings_url, dataset_name):
+    def receive_results(self, configs, trainings_url, dataset_name, username):
         try:
-            #data_service_url = f"http://127.0.0.1:8004/dataset/{dataset_name}"
-            #response = requests.get(data_service_url)
-            #if response.status_code != 200:
-            #    raise Exception("Failed to load dataset from DataService")
-
-            #dataset = response.json()
-            #print("Dataset loaded successfully:", dataset)
-            # Debugging-Ausgabe, um zu sehen, was genau in dataset_json ist
-            #print("Dataset JSON type:", type(dataset))
-            #if isinstance(dataset, list):
-            #    print("Dataset JSON list length:", len(dataset))
-
             results = {}
-            #dataset_data = dataset.get("data", [])
-            #if not isinstance(dataset_data, list):
-            #    raise ValueError("Dataset 'data' field is not a list.")
             for i, config in enumerate(configs):
                 print(f"Config before conversion {i+1}:", config)
-                config_dict = self.orchestrator_service.configuration_to_dict(config)
-                config_dict["dataset_name"] = dataset_name
+                config_dict = config.to_dict()
                 print(f"Sending config {i+1} to training service:", config_dict)  # Logge die zu sendenden Konfigurationen
-                response = requests.post(trainings_url, json=config_dict)
+                configs_data_user = config_dict
+                configs_data_user['dataset_name'] = dataset_name
+                configs_data_user['username'] = username
+                response = requests.post(trainings_url, json=configs_data_user)
                 if response.status_code == 200:
                     results[f'Config{i+1}'] = response.json()
                 else:
@@ -74,7 +47,6 @@ class OrchestratorController:
             print("An Error occured during returning results and recommendation: ",e)
             return ''
 
-    # Token Validierung    
     def validate_token(self, token):
         try:
             auth_service_url = "http://localhost:8003/validate-auth"

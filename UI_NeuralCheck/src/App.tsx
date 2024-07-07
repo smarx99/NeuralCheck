@@ -65,7 +65,7 @@ const App: React.FC = () => {
             }
           });
           if (response.status === 200) {
-            setDatasets(response.data.datasets.map((dataset: Dataset) => dataset.dataset_name));
+            setDatasets(response.data[0].datasets.map((dataset: any) => dataset.dataset_name));
           }
         } catch (error) {
           console.error('Error fetching datasets:', error);
@@ -114,6 +114,7 @@ const App: React.FC = () => {
 
   const handleLogout = () => {
     navigate('/login');
+    window.location.reload();
   };
 
 
