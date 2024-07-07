@@ -45,8 +45,8 @@ class DataHandler:
     def split_data(self, data):
 
         # define feature and target vector
-        x = data.iloc[:, 1:]  # Alle Spalten außer der ersten
-        y = data.iloc[:, 0]   # Erste Spalte ist Labels
+        x = data.drop(columns=['Labels'])  # Alle Spalten außer 'Labels'
+        y = data['Labels']  # 'Labels' Spalte als Zielvariable
 
         # count the number of features
         num_features = x.shape[1]
