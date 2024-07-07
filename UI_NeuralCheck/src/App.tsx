@@ -43,7 +43,7 @@ const App: React.FC = () => {
   const [results, setResults] = useState<Record<string, Result>>({});
   const [isTraining, setIsTraining] = useState<boolean>(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
-  const [datasets, setDatasets] = useState<string[]>(['breast_cancer.csv']);
+  const [datasets, setDatasets] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
 

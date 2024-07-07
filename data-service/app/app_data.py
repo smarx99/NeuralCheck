@@ -1,6 +1,9 @@
+import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_pymongo import PyMongo
+import io
+from werkzeug.datastructures import FileStorage
 from controllers.DataController import DataController
 
 app = Flask(__name__)
@@ -15,15 +18,25 @@ db = mongo.db
 collection = db.datasets
 data_controller = DataController(db)
 
+@app.route('/default_dataset', methods=['GET'])
+def load_default_dataset():
+    username = request.args.get('username')
+    csv_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'breast_cancer_valid.csv')
+    with open(csv_file_path, 'rb') as file:
+        csv_content = file.read()
+        csv_file = io.BytesIO(csv_content)
+        file = FileStorage(stream=csv_file, filename="breast_cancer_valid.csv", content_type="text/csv")
+    response, status = data_controller.upload_data(username, file)
+    return jsonify(response), status
 
 @app.route('/upload_dataset', methods=['POST'])
 def upload_data():
-    token = validate_token()
+    token = get_token()
+    token = data_controller.validate_token(token)
     if(token):
         file = request.files['file']
         username = request.form['username']
         print(f"Received file: {file.filename}, username: {username}")
-
         try:
             response, status = data_controller.upload_data(username, file)
             return jsonify(response), status
@@ -38,7 +51,7 @@ def upload_data():
 
 @app.route('/datasets/<username>', methods=['GET'])
 def get_user_datasets(username):
-    token = validate_token()
+    token = get_token()
     if(token):
         try:
             datasets = data_controller.get_user_datasets(username)
@@ -59,7 +72,7 @@ def get_dataset_by_dataset_name(dataset_name, username):
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-def validate_token():
+def get_token():
     # Token Validierung
     token = None
     if 'Authorization' in request.headers:

@@ -19,6 +19,14 @@ const Register: React.FC = () => {
         setTimeout(() => {
           navigate('/login'); // Weiterleitung zur Login-Seite nach erfolgreicher Registrierung
         }, 2000); // Warte 2 Sekunden, bevor weitergeleitet wird
+        const defaultDataset = await axios.get(`http://localhost:8004/default_dataset`, {
+          params: {
+            username: username
+        }
+        });
+        if (defaultDataset.status === 200) {
+            console.log('Default dataset was successfully uploaded for user: ', username)
+          } 
       } else {
         setMessage('')
         setError('Registration failed. Please try again.');

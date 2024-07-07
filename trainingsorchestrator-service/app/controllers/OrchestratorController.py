@@ -19,21 +19,15 @@ class OrchestratorController:
         
     def receive_results(self, configs, trainings_url, dataset_name, username):
         try:
-            data_service_url = f"http://127.0.0.1:8004/dataset/{username}/{dataset_name}"
-            response = requests.get(data_service_url)
-            if response.status_code != 200:
-                raise Exception("Failed to load dataset from DataService")
-
-            dataset = response.json()[0]['dataset']
-            print("Dataset loaded successfully:")
-
             results = {}
             for i, config in enumerate(configs):
                 print(f"Config before conversion {i+1}:", config)
-                config_data_dict = config.to_dict()
-                config_data_dict["data"] = dataset
-                print(f"Sending config {i+1} to training service:", config_data_dict)  # Logge die zu sendenden Konfigurationen
-                response = requests.post(trainings_url, json=config_data_dict)
+                config_dict = config.to_dict()
+                print(f"Sending config {i+1} to training service:", config_dict)  # Logge die zu sendenden Konfigurationen
+                configs_data_user = config_dict
+                configs_data_user['dataset_name'] = dataset_name
+                configs_data_user['username'] = username
+                response = requests.post(trainings_url, json=configs_data_user)
                 if response.status_code == 200:
                     results[f'Config{i+1}'] = response.json()
                 else:
