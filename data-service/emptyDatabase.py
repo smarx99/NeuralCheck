@@ -9,13 +9,13 @@ mongo = PyMongo(app)
 
 # Datenbank und Sammlung
 db = mongo.db
-users = db.users
+datasets = db.datasets
 
 def clear_db():
     # Alle Dokumente in der 'users'-Sammlung löschen
-    print(users.count_documents({}))
-    users.delete_many({})
-    print(users.count_documents({}))
+    print(datasets.count_documents({}))
+    datasets.delete_many({})
+    print(datasets.count_documents({}))
 
 if __name__ == '__main__':
     with app.app_context():

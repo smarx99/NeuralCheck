@@ -1,7 +1,6 @@
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-# from data-service.app.controllers.DataController import DataController
 import pandas as pd
 import requests
 
@@ -15,6 +14,7 @@ class DataHandler:
                 raise Exception(f"Failed to load dataset {dataset_name} from DataService")
 
             json_response = response.json()
+            #print("JSON response from DataService:", json_response)
 
             # Extract the data from the nested JSON response
             data_list = json_response[0]['dataset']['data']
@@ -30,8 +30,6 @@ class DataHandler:
     def prepare_data(self, data):
 
         df_prepared = data
-
-        # drop duplicates
         df_prepared.drop_duplicates(inplace=True)
 
         return df_prepared
@@ -39,11 +37,11 @@ class DataHandler:
     def split_data(self, data):
 
         # define feature and target vector
-        x = data.drop(columns=['Labels']) 
-        y = data['Labels']  # 'Labels' as target variable
+        x = data.drop(columns=['Labels'])  # Alle Spalten außer 'Labels'
+        y = data['Labels']  # 'Labels' Spalte als Zielvariable
 
         # count the number of features
-        num_features = x.shape[1]-1
+        num_features = x.shape[1]
 
         # encode categorical target vector
         encoder = LabelEncoder()

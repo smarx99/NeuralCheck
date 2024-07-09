@@ -21,7 +21,7 @@ data_controller = DataController(db)
 @app.route('/default_dataset', methods=['GET'])
 def load_default_dataset():
     username = request.args.get('username')
-    csv_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'breast_cancer_valid.csv')
+    csv_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data-service/breast_cancer_valid.csv')
     with open(csv_file_path, 'rb') as file:
         csv_content = file.read()
         csv_file = io.BytesIO(csv_content)

@@ -9,7 +9,7 @@ app.config["MONGO_URI"] = "mongodb://localhost:27017/users_db"
 mongo = PyMongo(app)
 
 db = mongo.db
-datasets = db.datasets
+users = db.users
 
 def show_all_entries():
        # Alle Sammlungen in der Datenbank auflisten

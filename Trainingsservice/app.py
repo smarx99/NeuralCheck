@@ -1,18 +1,14 @@
 import pandas as pd
 from flask import Flask, request, jsonify
-from app.Service.DataHandler import DataHandler
-from app.Controller.NetworkController import NetworkController
-from app.Service.NetworkService import NetworkService
-from app.Model.Configuration import Configuration
+from App.Service.DataHandler import DataHandler
+from App.Controller.NetworkController import NetworkController
+from App.Service.NetworkService import NetworkService
+from App.Model.Configuration import Configuration
 
 app = Flask(__name__)
 
 # Create instances of the classes
-db_url = "mongodb://localhost:27017"
-db_name = "data_db"
-collection_name = "datasets"
-data_controller = DataController(db_url, db_name, collection_name)
-data_handler = DataHandler(data_controller)
+data_handler = DataHandler()
 network_service = NetworkService()
 network_controller = NetworkController(network_service)
 
@@ -28,13 +24,11 @@ def get_dataset(dataset_name):
 
 @app.route('/prepare_data', methods=['GET'])
 def prepare_data():
-    dataset_id = request.args.get('dataset_id')
-    data = data_handler.load_dataset(dataset_id)
+    data = data_handler.load_dataset()
     prepared_data = data_handler.prepare_data(data)
     return jsonify(prepared_data.head().to_dict()), 200
 
 
-# just for now
 def configuration_to_dict(config):
     return {
         "nodes_per_layer": config.nodes_per_layer,
@@ -75,7 +69,6 @@ def train_network():
     configuration.result = test_acc
     
     # return configuration
-    print("Ende Configuration:", configuration)
     return jsonify(configuration_to_dict(configuration)), 200
 
 

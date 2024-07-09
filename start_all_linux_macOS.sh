@@ -7,20 +7,20 @@
 # Make the script executable: "chmod +x start_all_linux_macOS.sh"
 # Run the script: "./start_all_linux_macOS.sh"
 
-APP_DIR="~/Desktop/NeuralCheck"
-CONDA_ENV_NAME="neural-check"
+APP_DIR="~/NeuralCheck"
+CONDA_ENV_NAME="tensi"
 
 # Start the UI_NeuralCheck service
 osascript -e "tell application \"Terminal\" to do script \"cd $APP_DIR/UI_NeuralCheck && npm run dev\""
 
 # Start the authentifizierungs-service
-osascript -e "tell application \"Terminal\" to do script \"source activate $CONDA_ENV_NAME && cd $APP_DIR/authentifizierungs-service && python app/auth.py\""
+osascript -e "tell application \"Terminal\" to do script \"source activate $CONDA_ENV_NAME && cd $APP_DIR/authentifizierungs-service && python auth.py\""
 
 # Start the trainingsorchestrator-service
-osascript -e "tell application \"Terminal\" to do script \"source activate $CONDA_ENV_NAME && cd $APP_DIR/trainingsorchestrator-service && python app/orchestrator.py\""
+osascript -e "tell application \"Terminal\" to do script \"source activate $CONDA_ENV_NAME && cd $APP_DIR/trainingsorchestrator-service && python orchestrator.py\""
 
 # Start the data-service
-osascript -e "tell application \"Terminal\" to do script \"source activate $CONDA_ENV_NAME && cd $APP_DIR/data-service && python app/app_data.py\""
+osascript -e "tell application \"Terminal\" to do script \"source activate $CONDA_ENV_NAME && cd $APP_DIR/data-service && python app_data.py\""
 
 # Start the Trainingsservice
 osascript -e "tell application \"Terminal\" to do script \"source activate $CONDA_ENV_NAME && cd $APP_DIR/Trainingsservice && python app.py\""
