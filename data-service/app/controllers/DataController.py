@@ -1,5 +1,5 @@
 import requests
-from services.DataService import DataService
+from app.services.DataService import DataService
 
 class DataController:
     def __init__(self, db):

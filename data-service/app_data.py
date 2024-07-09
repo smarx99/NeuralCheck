@@ -4,7 +4,7 @@ from flask_cors import CORS
 from flask_pymongo import PyMongo
 import io
 from werkzeug.datastructures import FileStorage
-from controllers.DataController import DataController
+from app.controllers.DataController import DataController
 
 app = Flask(__name__)
 CORS(app)  # Aktiviert CORS für alle Routen
@@ -21,7 +21,7 @@ data_controller = DataController(db)
 @app.route('/default_dataset', methods=['GET'])
 def load_default_dataset():
     username = request.args.get('username')
-    csv_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'breast_cancer_valid.csv')
+    csv_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data-service/breast_cancer_valid.csv')
     with open(csv_file_path, 'rb') as file:
         csv_content = file.read()
         csv_file = io.BytesIO(csv_content)

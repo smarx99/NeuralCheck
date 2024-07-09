@@ -1,0 +1,49 @@
+import unittest
+import numpy as np
+from keras import models, layers
+from unittest.mock import Mock
+from app.Service.NetworkService import NetworkService  # Passe den Importweg entsprechend deiner Struktur an
+
+# Dummy-Konfiguration für ein neuronales Netzwerk
+class DummyConfiguration:
+    def __init__(self, layers, nodes_per_layer, activation_functions):
+        self.layers = layers
+        self.nodes_per_layer = nodes_per_layer
+        self.activation_functions = activation_functions
+
+x_train = np.random.rand(100, 10)  # 100 Datenpunkte mit jeweils 10 Features
+y_train = np.random.randint(0, 2, size=(100,))  # Binäre Zielvariablen
+x_test = np.random.rand(20, 10)  # 20 Datenpunkte für die Bewertung
+y_test = np.random.randint(0, 2, size=(20,))  # Binäre Zielvariablen
+
+
+class TestNetworkService(unittest.TestCase):
+    
+    def setUp(self):
+        self.service = NetworkService()
+        
+    def test_create_network(self):
+        config = DummyConfiguration(
+            layers=3,
+            nodes_per_layer=[64, 32, 16],
+            activation_functions=['relu', 'relu', 'sigmoid']
+        )
+        num_features = 10 
+
+        network = self.service.create_network(config, num_features)
+
+        self.assertIsInstance(network, models.Sequential)
+
+        self.assertEqual(len(network.layers), config.layers + 1)
+        
+    def test_train_network(self):
+        mock_network = Mock(spec=models.Sequential)
+
+        trained_network = self.service.train_network(mock_network, x_train, y_train)
+
+        mock_network.compile.assert_called_once_with(optimizer='SGD', loss='binary_crossentropy', metrics=['accuracy'])
+        mock_network.fit.assert_called_once_with(x_train, y_train, batch_size=32, epochs=70)
+
+
+if __name__ == '__main__':
+    unittest.main()

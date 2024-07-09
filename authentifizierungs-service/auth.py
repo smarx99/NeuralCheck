@@ -3,7 +3,7 @@ from flask_cors import CORS
 from flask_pymongo import PyMongo
 import jwt
 from datetime import datetime, timedelta, timezone
-from controllers.AuthController import AuthController
+from app.controllers.AuthController import AuthController
  
 app = Flask(__name__)
 CORS(app)  # Aktiviert CORS für alle Routen
