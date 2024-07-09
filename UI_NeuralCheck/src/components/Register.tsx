@@ -15,17 +15,25 @@ const Register: React.FC = () => {
     try {
       const response = await axios.post('http://localhost:8003/register', { username, first_name: firstName, last_name: lastName, password });
       if (response.status === 201) {
-        setMessage("Registrierung erfolgreich! Sie werden in Kürze weitergeleitet.");
+        setMessage("Registration successful! You will be redirected shortly.");
         setTimeout(() => {
           navigate('/login'); // Weiterleitung zur Login-Seite nach erfolgreicher Registrierung
         }, 2000); // Warte 2 Sekunden, bevor weitergeleitet wird
+        const defaultDataset = await axios.get(`http://localhost:8004/default_dataset`, {
+          params: {
+            username: username
+        }
+        });
+        if (defaultDataset.status === 200) {
+            console.log('Default dataset was successfully uploaded for user: ', username)
+          } 
       } else {
         setMessage('')
-        setError('Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.');
+        setError('Registration failed. Please try again.');
       }
     } catch (error) {
       console.error('Error during registration:', error);
-      setError('Registrierung fehlgeschlagen. Bitte überprüfen Sie Ihre Anmeldedaten.');
+      setError('Registration failed. Please check your login details.');
     }
   };
 

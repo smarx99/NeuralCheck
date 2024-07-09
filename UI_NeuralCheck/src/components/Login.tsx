@@ -13,15 +13,18 @@ const Login: React.FC = () => {
       const response = await axios.post('http://localhost:8003/login', { username, password });
       const token = response.data.token;
 
+
       if (token) {
         localStorage.setItem('token', token);
+        localStorage.setItem("username", username);
         navigate('/app'); // Weiterleitung zur Haupt-App-Seite
+        window.location.reload();
       } else {
-        setError('Login fehlgeschlagen. Bitte versuchen Sie es erneut.');
+        setError('Login failed. Please try again.');
       }
     } catch (error) {
       console.error('Error during login:', error);
-      setError('Login fehlgeschlagen. Bitte überprüfen Sie Ihre Anmeldedaten.');
+      setError('Login failed. Please check your login details.');
     }
   };
 

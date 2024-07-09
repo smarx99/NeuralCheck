@@ -1,4 +1,4 @@
-from models.User import User
+from app.models.User import User
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class AuthService:
@@ -13,6 +13,7 @@ class AuthService:
             return User(user_data["username"], user_data["first_name"], user_data["last_name"], user_data["password"])
         
     def check_if_registered(self, user):
+        print(self.users.count_documents({}))
         if self.users.find_one({'username': user.username}):
             return True
         else: 

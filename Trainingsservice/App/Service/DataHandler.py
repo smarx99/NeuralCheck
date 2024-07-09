@@ -3,19 +3,29 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 # from data-service.app.controllers.DataController import DataController
 import pandas as pd
+import requests
 
 
 class DataHandler:
-    def __init__(self, data_controller):
-        self.data_controller = data_controller
-    def load_dataset(self, dataset_id):
-        response, status_code = self.data_controller.get_dataset_by_dataset_id(dataset_id)
-        if status_code == 200:
-            dataset = response["dataset"]
-            df = pd.DataFrame(dataset["data"])
+    def load_dataset(self, username, dataset_name):
+        try:
+            data_service_url = f"http://127.0.0.1:8004/dataset/{username}/{dataset_name}"
+            response = requests.get(data_service_url)
+            if response.status_code != 200:
+                raise Exception(f"Failed to load dataset {dataset_name} from DataService")
+
+            json_response = response.json()
+
+            # Extract the data from the nested JSON response
+            data_list = json_response[0]['dataset']['data']
+
+            # Convert the data to a DataFrame
+            df = pd.DataFrame(data_list)
+
             return df
-        else:
-            raise ValueError(response["error"])
+        except Exception as e:
+            print(f"Error loading dataset {dataset_name}:", e)
+            return pd.DataFrame()
 
     def prepare_data(self, data):
 
@@ -24,19 +34,13 @@ class DataHandler:
         # drop duplicates
         df_prepared.drop_duplicates(inplace=True)
 
-        # delete rows with nan values
-        # df_prepared = df_prepared.dropna(axis=0)
-
-        # fill columns with nan values
-        # column.fillna(column.mean(), inplace=True)
-
         return df_prepared
 
     def split_data(self, data):
 
         # define feature and target vector
-        x = data.iloc[:, 1:data.shape[1]]
-        y = data["label"]
+        x = data.drop(columns=['Labels']) 
+        y = data['Labels']  # 'Labels' as target variable
 
         # count the number of features
         num_features = x.shape[1]-1

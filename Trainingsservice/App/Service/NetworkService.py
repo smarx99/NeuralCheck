@@ -10,7 +10,9 @@ class NetworkService:
 
     def create_network(self, configurations, num_features):
 
+        #print("num features", num_features)
         num_layers = configurations.layers
+        #print("Configuration Layers:", num_layers)
         num_nodes_per_layer = configurations.nodes_per_layer
         activation_function = configurations.activation_functions
 
@@ -24,13 +26,14 @@ class NetworkService:
             network.add(layers.Dense(units=num_nodes_per_layer[i], activation=activation_function[i]))
             # network.add(Dropout(rate=0.1)) 
 
+        network.add(layers.Dense(units=1, activation='sigmoid'))
         return network
 
     def train_network(self, network, x_train, y_train):
 
         # or adam as optimizer
         network.compile(optimizer='SGD', loss='binary_crossentropy', metrics=['accuracy'])
-        network.fit(x_train, y_train, batch_size=50, epochs=100)
+        network.fit(x_train, y_train, batch_size=32, epochs=70)
 
         return network
 

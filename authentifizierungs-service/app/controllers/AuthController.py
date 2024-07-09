@@ -1,5 +1,6 @@
-from services.AuthService import AuthService
-from models.User import User
+from app.services.AuthService import AuthService
+from app.models.User import User
+import jwt
 
 class AuthController: 
     def __init__(self, db):
@@ -32,3 +33,22 @@ class AuthController:
         except Exception as e:
             print("An error occured while logging in the user: ",e)
             return {'error': 'Error while logging in the user'}, 400
+        
+    def get_user(self, use_data):
+        try:
+            user = self.auth_service.get_user(use_data['username'])
+            return user
+        except Exception as e:
+            print("An error occured while getting the user: ",e)
+            return {'error': 'Error while getting the user'}, 400
+        
+    def validate_token(self, token, key):
+        try:
+            decoded = jwt.decode(token, key, algorithms=["HS256"])
+            return decoded
+        except jwt.ExpiredSignatureError:
+            return {'error': 'Token has expired'}
+        except jwt.InvalidTokenError:
+            return {'error': 'Invalid token'}
+
+
