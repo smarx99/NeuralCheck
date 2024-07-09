@@ -1,5 +1,5 @@
 import requests
-from services.OrchestratorService import OrchestratorService
+from app.services.OrchestratorService import OrchestratorService
 
 class OrchestratorController:
 

@@ -1,4 +1,4 @@
-from models.Configuration import Configuration
+from app.models.Configuration import Configuration
 
 class OrchestratorService:
 

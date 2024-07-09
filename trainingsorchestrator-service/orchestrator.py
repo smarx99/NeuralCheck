@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_pymongo import PyMongo
-from controllers.OrchestratorController import OrchestratorController
+from app.controllers.OrchestratorController import OrchestratorController
  
 app = Flask(__name__)
 CORS(app)  # Aktiviert CORS für alle Routen
