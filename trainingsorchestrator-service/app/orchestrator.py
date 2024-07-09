@@ -14,6 +14,8 @@ mongo = PyMongo(app)
 db = mongo.db
 users = db.configs
 
+controller = OrchestratorController("http://localhost:5173/", db)
+
 def configuration_to_dict(config):
     config_dict = {
             "layers": config.layers,  # layers sollte eine Ganzzahl sein
@@ -32,15 +34,8 @@ def configurations_to_dict(configs):
  
 @app.route("/orch", methods=['POST'])
 def print_configs():
-    controller = OrchestratorController("http://localhost:5173/", db)
     # Token Validierung
-    token = None
-    if 'Authorization' in request.headers:
-        auth_header = request.headers['Authorization']
-        token = auth_header.split(" ")[1] if auth_header.startswith("Bearer ") else None
-    if not token:
-        return jsonify({'message': 'Token is missing!'}), 403
-    token = controller.validate_token(token)
+    token = get_token()
     user = token['data']['username']
     
     if(token):
@@ -67,6 +62,28 @@ def print_configs():
         return jsonify(response_data)
     else:
         return jsonify({'message': 'Token validation error!'}), 500
+    
+@app.route('/configs/<username>', methods=['GET'])
+def get_previous_configs(username):
+    token = get_token()
+    user = username
+
+    if(token):
+        configs = controller.get_previous_configs(user)
+        return jsonify(configs), 200
+    else: 
+        return jsonify({'message': 'Token validation error!'}), 500
+
+def get_token():
+    # Token Validierung
+    token = None
+    if 'Authorization' in request.headers:
+        auth_header = request.headers['Authorization']
+        token = auth_header.split(" ")[1] if auth_header.startswith("Bearer ") else None
+    if not token:
+        return jsonify({'message': 'Token is missing!'}), 403
+    token = controller.validate_token(token)
+    return token   
 
 if __name__ == "__main__":
     app.run(port=8001)

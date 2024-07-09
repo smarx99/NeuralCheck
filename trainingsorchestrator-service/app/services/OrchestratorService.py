@@ -47,3 +47,10 @@ class OrchestratorService:
             self.configs.insert_one(configs_dict)
         except Exception as e:
             print("An Error occured during saving configs: ",e)
+
+    def get_configs(self, username):
+        configs_data = self.configs.find({'username': username})
+        configs = []
+        for config_data in configs_data:
+            configs.append(config_data['configurations'])
+        return configs
