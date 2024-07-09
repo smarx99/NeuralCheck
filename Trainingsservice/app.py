@@ -1,9 +1,9 @@
 import pandas as pd
 from flask import Flask, request, jsonify
-from App.Service.DataHandler import DataHandler
-from App.Controller.NetworkController import NetworkController
-from App.Service.NetworkService import NetworkService
-from App.Model.Configuration import Configuration
+from app.Service.DataHandler import DataHandler
+from app.Controller.NetworkController import NetworkController
+from app.Service.NetworkService import NetworkService
+from app.Model.Configuration import Configuration
 
 app = Flask(__name__)
 
