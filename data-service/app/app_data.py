@@ -2,15 +2,18 @@ import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_pymongo import PyMongo
+from dotenv import load_dotenv
 import io
 from werkzeug.datastructures import FileStorage
 from controllers.DataController import DataController
+
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)  # Aktiviert CORS für alle Routen
 
 # Konfiguration der MongoDB-Verbindung
-app.config["MONGO_URI"] = "mongodb://localhost:27017/data_db"
+app.config["MONGO_URI"] = os.getenv('MONGO_URI_DATA')
 mongo = PyMongo(app)
 
 # Datenbank und Sammlung

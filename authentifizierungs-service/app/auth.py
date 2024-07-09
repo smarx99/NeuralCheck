@@ -3,14 +3,17 @@ from flask_cors import CORS
 from flask_pymongo import PyMongo
 import jwt
 from datetime import datetime, timedelta, timezone
+from dotenv import load_dotenv
+import os
 from controllers.AuthController import AuthController
+
+load_dotenv()  # Load environment variables from .env file
  
 app = Flask(__name__)
 CORS(app)  # Aktiviert CORS für alle Routen
-app.config['SECRET_KEY'] = 'imke_lara_steffi'
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config["MONGO_URI"] = os.getenv('MONGO_URI_USERS')
 
-# Konfiguration der MongoDB-Verbindung
-app.config["MONGO_URI"] = "mongodb://localhost:27017/users_db"
 mongo = PyMongo(app)
 
 # Datenbank und Sammlung
