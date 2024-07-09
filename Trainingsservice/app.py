@@ -8,9 +8,12 @@ from app.Model.Configuration import Configuration
 app = Flask(__name__)
 
 # Create instances of the classes
-data_handler = DataHandler()
+db_url = "mongodb://localhost:27017"
+db_name = "data_db"
+collection_name = "datasets"
+data_controller = DataController(db_url, db_name, collection_name)
+data_handler = DataHandler(data_controller)
 network_service = NetworkService()
-# configurations = Configuration(3, [30, 14, 1], ['relu', 'relu', 'sigmoid'], 0)
 network_controller = NetworkController(network_service)
 
 
@@ -25,7 +28,8 @@ def get_dataset(dataset_name):
 
 @app.route('/prepare_data', methods=['GET'])
 def prepare_data():
-    data = data_handler.load_dataset()
+    dataset_id = request.args.get('dataset_id')
+    data = data_handler.load_dataset(dataset_id)
     prepared_data = data_handler.prepare_data(data)
     return jsonify(prepared_data.head().to_dict()), 200
 
@@ -43,9 +47,6 @@ def configuration_to_dict(config):
 def train_network():
     # Extrahiere die Hyperparameter aus der Anfrage
     data = request.get_json()
-    print("Received data for training")  # Log received data
-
-    print("Layers:", data.get('layers'))
 
     configuration = Configuration(
         layers=data.get('layers'),
@@ -53,15 +54,12 @@ def train_network():
         activation_functions=data.get('activation_functions'),
         result=None
     )
-    print("Configuration:", configuration)
 
     # Load data
     dataset_name = data.get('dataset_name')
-    print("Datasetname: ", dataset_name)
 
     # get username
     username = data.get('username')
-    print('Username: ', username)
 
     df = data_handler.load_dataset(username, dataset_name)
 

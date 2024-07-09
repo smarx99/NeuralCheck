@@ -4,7 +4,7 @@ from flask_cors import CORS
 from flask_pymongo import PyMongo
 import io
 from werkzeug.datastructures import FileStorage
-from controllers.DataController import DataController
+from app.controllers.DataController import DataController
 
 app = Flask(__name__)
 CORS(app)  # Aktiviert CORS für alle Routen

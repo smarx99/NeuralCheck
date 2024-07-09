@@ -1,4 +1,3 @@
-# DataService.py
 import pandas as pd
 from pymongo import MongoClient
 from bson.objectid import ObjectId
@@ -63,9 +62,6 @@ class DataService:
                 else:
                    print("DataService: Insertion not acknowledged")
                 return f"Successfully uploaded dataset with dataset_name: {dataset_name}"
-            except errors.PyMongoError as e:
-                print(f"DataService: MongoDB error: {str(e)}")
-                raise
             except Exception as e:
                 print(f"DataService: Unexpected error: {str(e)}")
                 raise
