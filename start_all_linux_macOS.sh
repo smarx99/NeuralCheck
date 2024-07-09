@@ -5,10 +5,10 @@
 # Change the variable APP_DIR to the path where you NeuralCheck App lies
 # Change the variable CONDA_ENV_NAME to the name of your python environment
 # Make the script executable: "chmod +x start_all_linux_macOS.sh"
-# Run the script: "./start_all.sh"
+# Run the script: "./start_all_linux_macOS.sh"
 
-APP_DIR="~/Programmieren/Uni/Master/NeuralCheck"
-CONDA_ENV_NAME="tensi"
+APP_DIR="~/Desktop/NeuralCheck"
+CONDA_ENV_NAME="neural-check"
 
 # Start the UI_NeuralCheck service
 osascript -e "tell application \"Terminal\" to do script \"cd $APP_DIR/UI_NeuralCheck && npm run dev\""

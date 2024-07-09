@@ -19,12 +19,15 @@ To setup the development environment, first create a new conda environment and i
 
 ```
 #Create a new conda environment for the project
-conda create -n neural-check python=3.12.3 -y
+conda create -n neural-check python=3.11.5 -y
 conda activate neural-check
 
 # Install all packages
 pip install -r requirements.txt
 ```
+
+There are known issues with setting up TensorFlow on a MacBook with an M2 chip, here is a solution:
+https://developer.apple.com/metal/tensorflow-plugin/
 
 ## API Endpoint Documentation
 ### Training Service

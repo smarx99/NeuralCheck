@@ -20,7 +20,7 @@ const [showTooltip, setShowTooltip] = useState(false);
   return (
     <div className={`fixed top-0 left-0 h-full ${isOpen ? 'w-60' : 'w-16'} bg-blue-800 text-white transition-width duration-300`}>
       <div className="flex items-center justify-between p-4">
-        <h1 className={`text-xl font-bold ${isOpen ? 'block' : 'hidden'}`}>NeuralCheck</h1>
+        <Link to="/app" className={`text-xl font-bold ${isOpen ? 'block' : 'hidden'}`}>NeuralCheck</Link>
         <button onClick={toggleSidebar} className="focus:outline-none">
           {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
         </button>
@@ -52,7 +52,6 @@ const [showTooltip, setShowTooltip] = useState(false);
             <li key={index} className="p-2 pl-8">
               {isOpen && (
                 <span className="flex items-center">
-                  <BsClipboardData className="mr-2" />
                   <span className="block">{dataset}</span>
                 </span>
               )}

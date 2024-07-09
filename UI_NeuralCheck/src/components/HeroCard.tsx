@@ -15,6 +15,7 @@ interface HeroCardProps {
   initialNodesCount: number;
   initialActivationFunction: string;
   result?: string | number;
+  highlight?: boolean; // Neue Eigenschaft zum Hervorheben der besten Karte
 }
 
 const HeroCard = forwardRef<HeroCardRef, HeroCardProps>(({
@@ -22,7 +23,8 @@ const HeroCard = forwardRef<HeroCardRef, HeroCardProps>(({
   initialLayersCount,
   initialNodesCount,
   initialActivationFunction,
-  result
+  result,
+  highlight,
 }, ref) => {
   const maxLayers = 20;
   const maxNodes = 50;
@@ -54,11 +56,10 @@ const HeroCard = forwardRef<HeroCardRef, HeroCardProps>(({
     }),
   }));
 
-  // Formatieren des Result-Werts als Prozentzahl
   const formattedResult = typeof result === 'number' ? `${(result * 100).toFixed(2)}%` : result;
 
   return (
-    <div className="bg-white border-gray shadow-lg rounded-lg p-6 w-96 flex flex-col border-4 justify-center items-center text-center transition transform hover:scale-105">
+    <div className={`bg-white border-gray shadow-lg rounded-lg p-6 w-96 flex flex-col border-4 justify-center items-center text-center transition transform hover:scale-105 ${highlight ? 'border-yellow-500' : ''}`}>
       <div className="font-bold text-2xl mb-4 text-primary">{title}</div>
       <div className="flex flex-col space-y-4 w-full">
         <div>
@@ -69,7 +70,7 @@ const HeroCard = forwardRef<HeroCardRef, HeroCardProps>(({
             onChange={(e) => handleLayersInputChange(Number(e.target.value))} 
             className="border rounded p-2 w-full text-center" 
             min="1"
-            max={maxLayers} // max layers set to 20
+            max={maxLayers}
           />
         </div>
         {layerConfigs.map((config, layerIndex) => (
@@ -82,7 +83,7 @@ const HeroCard = forwardRef<HeroCardRef, HeroCardProps>(({
                 onChange={(e) => handleLayerChange(layerIndex, 'nodes', Math.min(Number(e.target.value), maxNodes))} 
                 className="border rounded p-2 w-full text-center" 
                 min="1"
-                max={maxNodes} // max nodes set to 50
+                max={maxNodes}
               />
             </div>
             <div>
