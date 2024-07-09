@@ -136,17 +136,18 @@ const App: React.FC = () => {
             if (fileInputRef.current) {
               fileInputRef.current.value = '';
             }
+            return { success: true };
           } else {
-            console.error('Error uploading dataset:', response.data);
+            return { success: false, message: 'Error uploading dataset' };
           }
-
         } catch (error) {
-          console.error('Error uploading dataset:', error);
+          return { success: false, message: 'Error uploading dataset' };
         }
       } else {
-        console.error('No username found in localStorage');
+        return { success: false, message: 'No username found in localStorage' };
       }
     }
+    return { success: false, message: 'No file selected' };
   };
 
   const getBestResultIndex = () => {
