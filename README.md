@@ -12,6 +12,8 @@ This documentation will guide you through setting up the development environment
   - [Authentication Service](#authentication-service)
   - [Data Service](#data-service)
 - [Frontend](#frontend)
+- [Start Application](#start-application)
+- [Run Tests](#run-tests)
 
 ## Development Environment Setup
 ### Conda Setup
