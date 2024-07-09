@@ -1,5 +1,5 @@
-from services.AuthService import AuthService
-from models.User import User
+from app.services.AuthService import AuthService
+from app.models.User import User
 import jwt
 
 class AuthController: 
