@@ -4,10 +4,7 @@ from sklearn.metrics import accuracy_score
 
 class NetworkService:
     def __init__(self):
-        self.config = None
-        self.network = None
-        self.train_data = None
-        self.test_data = None
+       pass
 
     def create_network(self, configurations, num_features):
 

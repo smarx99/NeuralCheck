@@ -12,6 +12,8 @@ This documentation will guide you through setting up the development environment
   - [Authentication Service](#authentication-service)
   - [Data Service](#data-service)
 - [Frontend](#frontend)
+- [Start Application](#start-application)
+- [Run Tests](#run-tests)
 
 ## Development Environment Setup
 ### Conda Setup
@@ -45,6 +47,7 @@ The Trainingsorchestrator Service will run under port 8001. The service provides
 | Endpoint          | Description                 |
 |-------------------|-----------------------------|
 | `GET /orch` | Used to process configuration data and returns results.
+| `GET /configs/<username>` | Used to return the configurations previously used by a user |
 
 ### Authentication Service
 The Authentication Service will run under port 8003. The service provides the following interfaces:
@@ -61,9 +64,10 @@ The Data Service will run under port 8004. The service provides the following in
 
 | Endpoint          | Description                 |
 |-------------------|-----------------------------|
+| `GET /default_dataset`| Used to upload the default dataset for a newly registered user |
 | `POST /upload_dataset` | Used to upload a new dataset.
 | `GET /datasets/<username>` | Used to retrieve all datasets associated with a specific user.
-| `GET /dataset/<dataset_name>`	| Used to retrieve a dataset by its specific dataset name.
+| `GET /dataset/<username/<dataset_name>`	| Used to retrieve a dataset by its specific dataset name for the given user.
 
 ## Frontend
 
@@ -76,6 +80,10 @@ Open the browser at http://localhost:5173/.
 
 ## Start Application
 
-The scripts `start_all_windows.bat` and `start_all_linux_macOS.sh` start all services required for the application.
+The scripts `start_all_windows.bat` or `start_all_linux_macOS.sh` start all services required for the application.
 Just run `./start_all_windows.bat` in your bash script for Windows. 
 For MacOS and Linux, make the script executable `chmod +x start_all.sh` in your shell script and run the script with `./start_all.sh`.
+
+## Run Tests
+
+To run tests for each service, open a terminal and navigate to the designated service directory. Then, execute the command `python -m unittest test`.

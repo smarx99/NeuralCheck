@@ -1,4 +1,4 @@
-from models.User import User
+from app.models.User import User
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class AuthService:

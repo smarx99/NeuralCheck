@@ -5,15 +5,25 @@ import jwt
 from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
 import os
-from controllers.AuthController import AuthController
+from app.controllers.AuthController import AuthController
+
 
 load_dotenv()  # Load environment variables from .env file
+
  
 app = Flask(__name__)
 CORS(app)  # Aktiviert CORS für alle Routen
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-app.config["MONGO_URI"] = os.getenv('MONGO_URI_USERS')
 
+# Debug-Ausgabe, um sicherzustellen, dass die Umgebungsvariablen geladen werden
+print(f"SECRET_KEY: {os.getenv('SECRET_KEY')}")
+
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+mongo_uri = os.getenv('MONGO_URI_USERS')
+if not mongo_uri:
+    raise ValueError("The MONGO_URI_USERS environment variable is not set.")
+
+# Konfiguration der MongoDB-Verbindung
+app.config["MONGO_URI"] = mongo_uri
 mongo = PyMongo(app)
 
 # Datenbank und Sammlung

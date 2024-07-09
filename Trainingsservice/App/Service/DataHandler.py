@@ -30,15 +30,7 @@ class DataHandler:
     def prepare_data(self, data):
 
         df_prepared = data
-
-        # drop duplicates
         df_prepared.drop_duplicates(inplace=True)
-
-        # delete rows with nan values
-        # df_prepared = df_prepared.dropna(axis=0)
-
-        # fill columns with nan values
-        # column.fillna(column.mean(), inplace=True)
 
         return df_prepared
 

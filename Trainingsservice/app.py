@@ -1,16 +1,15 @@
 import pandas as pd
 from flask import Flask, request, jsonify
-from app.Service.DataHandler import DataHandler
-from app.Controller.NetworkController import NetworkController
-from app.Service.NetworkService import NetworkService
-from app.Model.Configuration import Configuration
+from App.Service.DataHandler import DataHandler
+from App.Controller.NetworkController import NetworkController
+from App.Service.NetworkService import NetworkService
+from App.Model.Configuration import Configuration
 
 app = Flask(__name__)
 
 # Create instances of the classes
 data_handler = DataHandler()
 network_service = NetworkService()
-# configurations = Configuration(3, [30, 14, 1], ['relu', 'relu', 'sigmoid'], 0)
 network_controller = NetworkController(network_service)
 
 
@@ -30,7 +29,6 @@ def prepare_data():
     return jsonify(prepared_data.head().to_dict()), 200
 
 
-# just for now
 def configuration_to_dict(config):
     return {
         "nodes_per_layer": config.nodes_per_layer,
@@ -43,9 +41,6 @@ def configuration_to_dict(config):
 def train_network():
     # Extrahiere die Hyperparameter aus der Anfrage
     data = request.get_json()
-    print("Received data for training")  # Log received data
-
-    print("Layers:", data.get('layers'))
 
     configuration = Configuration(
         layers=data.get('layers'),
@@ -53,15 +48,12 @@ def train_network():
         activation_functions=data.get('activation_functions'),
         result=None
     )
-    print("Configuration:", configuration)
 
     # Load data
     dataset_name = data.get('dataset_name')
-    print("Datasetname: ", dataset_name)
 
     # get username
     username = data.get('username')
-    print('Username: ', username)
 
     df = data_handler.load_dataset(username, dataset_name)
 
@@ -77,7 +69,6 @@ def train_network():
     configuration.result = test_acc
     
     # return configuration
-    print("Ende Configuration:", configuration)
     return jsonify(configuration_to_dict(configuration)), 200
 
 
