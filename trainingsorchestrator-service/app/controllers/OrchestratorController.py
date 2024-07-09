@@ -1,5 +1,5 @@
 import requests
-from services.OrchestratorService import OrchestratorService
+from app.services.OrchestratorService import OrchestratorService
 
 class OrchestratorController:
 
@@ -55,6 +55,14 @@ class OrchestratorController:
         except Exception as e:
             print(e)
             return None
+    
+    def get_previous_configs(self, username):
+        try:
+            configs = self.orchestrator_service.get_configs(username)
+            return configs
+        except Exception as e:
+            print("An error occured while getting the configs: ",e)
+            return {'error': 'Error while getting the configs'}, 400
 
         
 
