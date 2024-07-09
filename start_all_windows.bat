@@ -7,13 +7,13 @@
 start "UI_NeuralCheck" cmd /k "cd UI_NeuralCheck && npm run dev"
 
 :: Start authentifizierungs-service
-start "authentifizierungs-service" cmd /k "cd authentifizierungs-service && python app\auth.py"
+start "authentifizierungs-service" cmd /k "cd authentifizierungs-service && python auth.py"
 
 :: Start trainingsorchestrator-service
-start "trainingsorchestrator-service" cmd /k "cd trainingsorchestrator-service && python app\orchestrator.py"
+start "trainingsorchestrator-service" cmd /k "cd trainingsorchestrator-service && python orchestrator.py"
 
 :: Start data-service
-start "data-service" cmd /k "cd data-service && python app\app_data.py"
+start "data-service" cmd /k "cd data-service && python app_data.py"
 
 :: Start Trainingsservice
 start "Trainingsservice" cmd /k "cd Trainingsservice && python app.py"

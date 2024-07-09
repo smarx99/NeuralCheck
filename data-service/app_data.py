@@ -8,12 +8,17 @@ from werkzeug.datastructures import FileStorage
 from app.controllers.DataController import DataController
 
 load_dotenv()
+print(os.getenv('MONGO_URI_DATA'))
 
 app = Flask(__name__)
 CORS(app)  # Aktiviert CORS für alle Routen
 
 # Konfiguration der MongoDB-Verbindung
-app.config["MONGO_URI"] = os.getenv('MONGO_URI_DATA')
+mongo_uri = os.getenv('MONGO_URI_DATA')
+if not mongo_uri:
+    raise ValueError("The MONGO_URI_DATA environment variable is not set.")
+
+app.config["MONGO_URI"] = mongo_uri
 mongo = PyMongo(app)
 
 # Datenbank und Sammlung
