@@ -10,12 +10,25 @@ interface SidebarProps {
   isOpen: boolean;
   toggleSidebar: () => void;
   datasets: string[];
-  onUploadDataset: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onUploadDataset: (event: React.ChangeEvent<HTMLInputElement>) => Promise<{ success: boolean; message?: string }>;
   fileInputRef: RefObject<HTMLInputElement>;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, datasets, onUploadDataset, fileInputRef }) => {
 const [showTooltip, setShowTooltip] = useState(false);
+const [uploadError, setUploadError] = useState<string | null>(null);
+const [uploadMessage, setUploadMessage] = useState<string>('');
+
+const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  setUploadError(null); // Clear previous errors
+  setUploadMessage(''); // Clear previous messages
+  const result = await onUploadDataset(event);
+  if (result.success) {
+    setUploadMessage('Upload successful!');
+  } else {
+    setUploadError(result.message || 'Error uploading dataset. Please try again.');
+  }
+};
 
   return (
     <div className={`fixed top-0 left-0 h-full ${isOpen ? 'w-60' : 'w-16'} bg-blue-800 text-white transition-width duration-300`}>
@@ -61,11 +74,21 @@ const [showTooltip, setShowTooltip] = useState(false);
             <input
               type="file"
               accept=".csv"
-              onChange={onUploadDataset}
+              onChange={handleUpload}
               ref={fileInputRef}
               className="hidden"
               id="file-upload"
             />
+            {uploadError && ( // Display error if it exists
+              <div className="text-red-500 text-sm p-2">
+                {uploadError}
+              </div>
+            )}
+            {uploadMessage && ( // Display message if it exists
+              <div className="text-green-500 text-sm p-2">
+                {uploadMessage}
+              </div>
+            )}
             <label htmlFor="file-upload" className="cursor-pointer flex items-center">
               {isOpen && <span className="text-xl mr-4">+</span>}
               <span className={`${isOpen ? 'block' : 'hidden'}`}>Upload Dataset</span>
