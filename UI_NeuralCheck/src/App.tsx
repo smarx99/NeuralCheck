@@ -175,7 +175,7 @@ const App: React.FC = () => {
           <FontAwesomeIcon icon={faSignOutAlt} size="2x" />
         </button>
       )}
-      {location.pathname === '/app' && (
+      {(location.pathname === '/app' || location.pathname === '/account') && (
         <Sidebar 
           isOpen={isSidebarOpen} 
           toggleSidebar={toggleSidebar} 
