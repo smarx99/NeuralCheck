@@ -73,12 +73,6 @@ const Account: React.FC = () => {
             >
               Logout
             </button>
-            <p className="text-center mt-4">
-              Want to change your account?{' '}
-              <Link to="/edit-account" className="text-blue-500 hover:underline">
-                Edit here
-              </Link>
-            </p>
           </div>
         </div>
       </div>

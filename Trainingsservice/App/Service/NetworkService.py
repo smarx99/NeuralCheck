@@ -1,5 +1,4 @@
 from keras import models,layers
-from sklearn.metrics import accuracy_score
 
 
 class NetworkService:
@@ -31,13 +30,14 @@ class NetworkService:
 
         # or adam as optimizer
         network.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-        network.fit(x_train, y_train, batch_size=32, epochs=70)
+        #network.fit(x_train, y_train, batch_size=32, epochs=70)
+        network.fit(x_train, y_train, batch_size=32, epochs=20)
 
         return network
 
     def evaluate_network(self, network, x_test, y_test):
 
-        test_acc = accuracy_score(y_test, network.predict(x_test).astype(int))
+        test_loss, test_acc = network.evaluate(x_test, y_test)
 
         return test_acc
     
