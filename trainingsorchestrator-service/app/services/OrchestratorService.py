@@ -5,13 +5,13 @@ class OrchestratorService:
     def __init__(self, db):
         self.configs = db.configs
 
+    # Split configs and add them to training queue
     def splitting_configs(self, configurations):
         try:
             training_queue = []
             for config in configurations:
-                layers = len(config['nodes_per_layer'])  # Anzahl der Schichten ist die Länge der nodes_per_layer Liste
-                #layers = config['layers']
-                nodes_per_layer = config['nodes_per_layer']  # nodes_per_layer sollte eine Liste sein
+                layers = len(config['nodes_per_layer'])  
+                nodes_per_layer = config['nodes_per_layer']  
                 activation_functions = config['activation_functions']
                 training_queue.append(Configuration(layers, nodes_per_layer, activation_functions))
             return training_queue
@@ -20,6 +20,7 @@ class OrchestratorService:
             training_queue = Configuration('', '', '')
             return training_queue
     
+    # Determine best result
     def recommend_config(self, configs):
         try:
             best_key = None
@@ -33,7 +34,8 @@ class OrchestratorService:
         except Exception as e:
             print("An Error occured during returning recommendation: ",e)
             return ''
-        
+
+    # Save configs in database 
     def save_configs(self, configs, user, dataset_name):
         try:
             configs_list = []
@@ -48,6 +50,7 @@ class OrchestratorService:
         except Exception as e:
             print("An Error occured during saving configs: ",e)
 
+    # Get configs of a user
     def get_configs(self, username):
         configs_data = self.configs.find({'username': username})
         configs = []

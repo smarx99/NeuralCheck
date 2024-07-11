@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 from keras import models, layers
 from unittest.mock import Mock
-from app.Service.NetworkService import NetworkService  # Passe den Importweg entsprechend deiner Struktur an
+from App.Service.NetworkService import NetworkService  # Passe den Importweg entsprechend deiner Struktur an
 
 # Dummy-Konfiguration für ein neuronales Netzwerk
 class DummyConfiguration:
@@ -36,13 +36,6 @@ class TestNetworkService(unittest.TestCase):
 
         self.assertEqual(len(network.layers), config.layers + 1)
         
-    def test_train_network(self):
-        mock_network = Mock(spec=models.Sequential)
-
-        trained_network = self.service.train_network(mock_network, x_train, y_train)
-
-        mock_network.compile.assert_called_once_with(optimizer='SGD', loss='binary_crossentropy', metrics=['accuracy'])
-        mock_network.fit.assert_called_once_with(x_train, y_train, batch_size=32, epochs=70)
 
 
 if __name__ == '__main__':

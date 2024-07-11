@@ -1,9 +1,11 @@
+# Script for checking contents of a database
+
 from flask import Flask, jsonify
 from flask_pymongo import PyMongo
 
 app = Flask(__name__)
 
-# Konfiguration der MongoDB-Verbindung
+# Configuration to MongoDB
 app.config["MONGO_URI"] = "mongodb://localhost:27017/data_db"
 mongo = PyMongo(app)
 
@@ -11,7 +13,6 @@ db = mongo.db
 datasets = db.datasets
 
 def show_all_entries():
-       # Alle Sammlungen in der Datenbank auflisten
     collections = db.list_collection_names()
 
     if not collections:
@@ -33,5 +34,4 @@ def show_all_entries():
             print("Die Datenbank ist leer.")
 if __name__ == '__main__':
     with app.app_context():
-        # Methode 1: Leeren der Sammlungen
         show_all_entries()

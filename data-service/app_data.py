@@ -7,13 +7,13 @@ import io
 from werkzeug.datastructures import FileStorage
 from app.controllers.DataController import DataController
 
+# Load environment variables from .env file
 load_dotenv()
-print(os.getenv('MONGO_URI_DATA'))
 
 app = Flask(__name__)
-CORS(app)  # Aktiviert CORS für alle Routen
+CORS(app)  
 
-# Konfiguration der MongoDB-Verbindung
+# Configuration to MongoDB
 mongo_uri = os.getenv('MONGO_URI_DATA')
 if not mongo_uri:
     raise ValueError("The MONGO_URI_DATA environment variable is not set.")
@@ -21,11 +21,12 @@ if not mongo_uri:
 app.config["MONGO_URI"] = mongo_uri
 mongo = PyMongo(app)
 
-# Datenbank und Sammlung
+# Database and Collection
 db = mongo.db
 collection = db.datasets
 data_controller = DataController(db)
 
+# Load default dataset when user registers
 @app.route('/default_dataset', methods=['GET'])
 def load_default_dataset():
     username = request.args.get('username')
@@ -37,6 +38,7 @@ def load_default_dataset():
     response, status = data_controller.upload_data(username, file)
     return jsonify(response), status
 
+# Upload given dataset to DB
 @app.route('/upload_dataset', methods=['POST'])
 def upload_data():
     token = get_token()
@@ -57,6 +59,7 @@ def upload_data():
     else:
         return jsonify({'message': 'Token validation error!'}), 500
 
+# Get names of all datasets of a user
 @app.route('/datasets/<username>', methods=['GET'])
 def get_user_datasets(username):
     token = get_token()
@@ -70,6 +73,7 @@ def get_user_datasets(username):
     else:
         return jsonify({'message': 'Token validation error!'}), 500
 
+# Get content of a dataset of a user
 @app.route('/dataset/<username>/<dataset_name>', methods=['GET'])
 def get_dataset_by_dataset_name(dataset_name, username):
     try:
@@ -80,8 +84,8 @@ def get_dataset_by_dataset_name(dataset_name, username):
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
+# Validate token
 def get_token():
-    # Token Validierung
     token = None
     if 'Authorization' in request.headers:
         auth_header = request.headers['Authorization']

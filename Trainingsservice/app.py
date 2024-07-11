@@ -12,7 +12,7 @@ data_handler = DataHandler()
 network_service = NetworkService()
 network_controller = NetworkController(network_service)
 
-
+# Get dataset from data service
 @app.route('/dataset/<dataset_name>', methods=['GET'])
 def get_dataset(dataset_name):
     try:
@@ -22,12 +22,12 @@ def get_dataset(dataset_name):
         print("Error loading dataset:", e)
         return jsonify({"error": "Failed to load dataset"}), 500
 
+# Prepare dataset for training
 @app.route('/prepare_data', methods=['GET'])
 def prepare_data():
     data = data_handler.load_dataset()
     prepared_data = data_handler.prepare_data(data)
     return jsonify(prepared_data.head().to_dict()), 200
-
 
 def configuration_to_dict(config):
     return {
@@ -37,9 +37,10 @@ def configuration_to_dict(config):
         "result": config.result
     }
 
+# Train Network
 @app.route('/train', methods=['POST'])
 def train_network():
-    # Extrahiere die Hyperparameter aus der Anfrage
+    # Get hyperparameters of request
     data = request.get_json()
 
     configuration = Configuration(
@@ -68,7 +69,6 @@ def train_network():
 
     configuration.result = test_acc
     
-    # return configuration
     return jsonify(configuration_to_dict(configuration)), 200
 
 

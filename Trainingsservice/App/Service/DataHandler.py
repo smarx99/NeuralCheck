@@ -6,6 +6,8 @@ import requests
 
 
 class DataHandler:
+
+    # Load dataset from data service
     def load_dataset(self, username, dataset_name):
         try:
             data_service_url = f"http://127.0.0.1:8004/dataset/{username}/{dataset_name}"
@@ -14,12 +16,9 @@ class DataHandler:
                 raise Exception(f"Failed to load dataset {dataset_name} from DataService")
 
             json_response = response.json()
-            #print("JSON response from DataService:", json_response)
 
             # Extract the data from the nested JSON response
             data_list = json_response[0]['dataset']['data']
-
-            # Convert the data to a DataFrame
             df = pd.DataFrame(data_list)
 
             return df
@@ -27,30 +26,30 @@ class DataHandler:
             print(f"Error loading dataset {dataset_name}:", e)
             return pd.DataFrame()
 
+    # Delete duplicates
     def prepare_data(self, data):
-
         df_prepared = data
         df_prepared.drop_duplicates(inplace=True)
-
         return df_prepared
 
+    # Split data into training and test data and scale data
     def split_data(self, data):
 
-        # define feature and target vector
-        x = data.drop(columns=['Labels'])  # Alle Spalten außer 'Labels'
-        y = data['Labels']  # 'Labels' Spalte als Zielvariable
+        # Define feature and target vector
+        x = data.drop(columns=['Labels']) 
+        y = data['Labels'] 
 
-        # count the number of features
+        # Count the number of features
         num_features = x.shape[1]
 
-        # encode categorical target vector
+        # Encode categorical target vector
         encoder = LabelEncoder()
         y = encoder.fit_transform(y)
 
-        # conduct train test split
+        # Conduct train test split
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=42)
 
-        # normalize the data
+        # Normalize the data
         scaler = StandardScaler()
         x_train = scaler.fit_transform(x_train)
         x_test = scaler.transform(x_test)

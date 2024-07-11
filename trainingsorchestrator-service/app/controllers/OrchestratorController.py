@@ -8,6 +8,7 @@ class OrchestratorController:
         self.orchestrator_service = OrchestratorService(db)
         self.configs = db.configs
     
+    # Splitting and saving configs
     def process_request(self, configurations, user, dataset_name):
         try:
             configs = self.orchestrator_service.splitting_configs(configurations)
@@ -16,7 +17,8 @@ class OrchestratorController:
         except Exception as e:
             print("An error occurred while processing the request:", e)
             return ''
-        
+
+    # Receive results of each trainings service   
     def receive_results(self, configs, trainings_url, dataset_name, username):
         try:
             results = {}
@@ -37,6 +39,7 @@ class OrchestratorController:
             print("An Error occured while receiving the results: ", e)
             return ''
     
+    # Determine best result and return results and recommendation
     def return_results_recommendations(self, results):
         try:
             print("Results before recommendations:", results)
@@ -47,6 +50,7 @@ class OrchestratorController:
             print("An Error occured during returning results and recommendation: ",e)
             return ''
 
+    # Validate token with auth service
     def validate_token(self, token):
         try:
             auth_service_url = "http://localhost:8003/validate-auth"

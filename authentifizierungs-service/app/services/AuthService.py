@@ -36,7 +36,8 @@ class AuthService:
             )
         else:
             return None
-        
+
+    # Check username and correct password  
     def verify_user(self, username, password):
         user = self.get_user(username)
         if user and check_password_hash(user.password, password):

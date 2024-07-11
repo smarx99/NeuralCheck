@@ -7,36 +7,34 @@ from dotenv import load_dotenv
 import os
 from app.controllers.AuthController import AuthController
 
+# Load environment variables from .env file
+load_dotenv()  
 
-load_dotenv()  # Load environment variables from .env file
-
- 
 app = Flask(__name__)
-CORS(app)  # Aktiviert CORS für alle Routen
-
-# Debug-Ausgabe, um sicherzustellen, dass die Umgebungsvariablen geladen werden
-print(f"SECRET_KEY: {os.getenv('SECRET_KEY')}")
+CORS(app) 
 
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 mongo_uri = os.getenv('MONGO_URI_USERS')
 if not mongo_uri:
     raise ValueError("The MONGO_URI_USERS environment variable is not set.")
 
-# Konfiguration der MongoDB-Verbindung
+# Configuration to MongoDB
 app.config["MONGO_URI"] = mongo_uri
 mongo = PyMongo(app)
 
-# Datenbank und Sammlung
+# Database and Collection
 db = mongo.db
 users = db.users
 auth_controller = AuthController(db)
 
+# Registration of user
 @app.route('/register', methods=['POST'])
 def register():
     data = request.json
     response, status = auth_controller.register_user(data)
     return jsonify(response), status
 
+# Login of User and Token generation
 @app.route('/login', methods=['POST'])
 def login():
     data = request.json
@@ -51,6 +49,7 @@ def login():
     else:
         return jsonify({'error': 'Invalid username or password'}), 401
 
+# Return of user information based on token
 @app.route('/user', methods=['GET'])
 def get_user():
     token = request.headers.get('Authorization')
@@ -73,6 +72,7 @@ def get_user():
     except jwt.InvalidTokenError:
         return jsonify({'error': 'Invalid token!'}), 401
 
+# Validation of token
 @app.route('/validate-auth', methods=['POST'])
 def validate_auth():
     token = request.json.get('token')
